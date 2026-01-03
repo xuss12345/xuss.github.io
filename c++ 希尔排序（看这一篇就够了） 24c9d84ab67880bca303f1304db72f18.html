@@ -1,0 +1,759 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>c++ 希尔排序（看这一篇就够了）</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="24c9d84a-b678-80bc-a303-f1304db72f18" class="page sans"><header><h1 class="page-title" dir="auto">c++ 希尔排序（看这一篇就够了）</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>创建者</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocI05DXY3twXoSrPO2Eh2zr8xlEm_8PfhbXI0Vd2LTEuYHyj4A=s100" class="icon user-icon"/>lu cas</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>类别</th><td><span class="selected-value select-value-color-gray">c++</span><span class="selected-value select-value-color-green">排序算法</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>创建时间</th><td><time>@2025年8月11日 17:40</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8021-81bc-c830af687ca1" class="">1.定义</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-803f-887b-e38810fe8d1a" class="">希尔排序（Shell Sort）是一种基于插入排序的排序算法，它通过将待排序的数组分成若干个子序列，使得每个子序列中的元素基本有序，从而提高后续插入排序的效率。希尔排序是非稳定排序算法。</p></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8054-ae0f-da476514f1b3" class="">2.概述</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8004-8e12-c70a9c719fb3" class="">希尔排序是由美国计算机科学家Donald Shell在1959年提出的。它是插入排序的一种改进版本，主要通过引入“增量”概念来减少元素之间的移动次数。希尔排序的核心在于通过分组和逐步缩小增量，使得在最终的插入排序中，数据的移动更加高效。</p></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8060-818d-d180d7d18e50" class="">3.算法思想</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8023-a5f8-c29400b7753c" class="">希尔排序的算法思想可以概括为以下几个步骤：</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8028-841a-e5bcb78833d0" class="">1. 选择增量：首先选择一个初始增量gap（步长），通常是数组长度的一半。然后逐步减小增量，直到增量为1。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-806b-a566-efb78c216300" class="">2. 分组：根据当前的增量，将数组分成若干个子序列。每个子序列由间隔为增量的元素组成。例如，如果增量为3，则第一个子序列包含索引为0、3、6的元素，第二个子序列包含索引为1、4、7的元素，依此类推。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8084-a22b-cc09187b120d" class="">3. 对子序列进行插入排序：对每个子序列进行插入排序。由于子序列的元素相对较少且基本有序，插入排序的效率会更高。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8088-b359-cd5d794add4f" class="">4. 减小增量并重复：重复步骤2和步骤3，逐步减小增量，直到增量为1。此时，整个数组会被视为一个子序列，进行最后的插入排序。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-800d-b9be-f269a1d0b9c1" class="">通过这种方式，希尔排序能够有效地减少数据的无序程度，从而提高排序的效率。希尔排序的时间复杂度依赖于增量的选择，最坏情况下为O(n^2)，而在最佳情况下可以达到O(n log n)。\</p></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-802f-943f-dd75fb282307" class="image"><a href="https://i-blog.csdnimg.cn/direct/6f83e6973e204651ae8c8ccde5492fe9.gif"><img style="width:700px" src="https://i-blog.csdnimg.cn/direct/6f83e6973e204651ae8c8ccde5492fe9.gif"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-8053-b8ca-c576fa9b8419" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8024-ae0b-fa98752a5e8d" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8047-9c73-ff1b161fd32d" class="">4.代码</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-8032-a58e-ef38ac184378" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">#include &lt;iostream&gt;#include &lt;vector&gt;using namespace std;
+void shellSort(vector&lt;int&gt;&amp; arr)
+{
+    int n=arr.size();
+    int gap=n/2; // 初始增量
+    // 逐步减小增量
+    while(gap&gt;0) {
+        // 对每个增量进行插入排序
+        for(int i=gap;i&lt;n;i++) {
+            int temp=arr[i];
+            int j=i;
+
+            // 在当前增量的子序列中进行插入排序
+            while(j&gt;=gap&amp;&amp;arr[j-gap]&gt;temp) {
+                arr[j]=arr[j-gap];
+                j-=gap;
+            }
+            arr[j]=temp;
+        }
+        gap/=2; // 减小增量
+    }
+}
+int main()
+{
+    vector&lt;int&gt; data;
+    data.push_back(12);
+    data.push_back(34);
+    data.push_back(54);
+    data.push_back(2);
+    data.push_back(3);
+    cout&lt;&lt;&quot;原始数组: &quot;;
+    for(int i=0;i&lt;data.size();++i)
+	{
+        cout&lt;&lt;data[i]&lt;&lt;&quot; &quot;;
+    }
+    cout&lt;&lt;endl;
+    shellSort(data);
+    cout&lt;&lt;&quot;排序后数组: &quot;;
+    for(int i=0;i&lt;data.size();++i)
+	{
+        cout&lt;&lt;data[i]&lt;&lt;&quot; &quot;;
+    }
+    cout&lt;&lt;endl;
+    return 0;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-8047-bbea-fededea5298d" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8018-884f-d73a07f1bb28" class="">5.提醒</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8004-8170-f3342f36d917" class="">在实现和使用希尔排序算法时，有几个需要注意和提醒的地方：</p></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80d7-95e3-d594dafcd783" class="">1. 时间复杂度</h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-803c-b507-ecbc95281318" class="bulleted-list"><li style="list-style-type:disc"><strong>时间复杂度</strong>：希尔排序的时间复杂度依赖于增量序列的选择。最坏情况下，时间复杂度为 O(n^2)，而在最佳情况下可以达到 O(n log n)。了解不同增量序列的性能特征可以帮助你选择合适的实现。</li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80b6-80ee-ee0a4bb22ea3" class="">2. 稳定性</h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8034-a968-ea048b38e023" class="bulleted-list"><li style="list-style-type:disc"><strong>不稳定排序</strong>：希尔排序是一种不稳定的排序算法。这意味着相同元素的相对顺序可能会改变。如果需要保持相同元素的相对顺序，可能需要考虑其他稳定的排序算法（如归并排序或插入排序）。</li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-804e-ae4b-d1f2590e9a77" class="">3. 空间复杂度</h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-806b-ad5c-e7abae153d2e" class="bulleted-list"><li style="list-style-type:disc"><strong>空间复杂度</strong>：希尔排序是原地排序算法，空间复杂度为 O(1)。这意味着它不需要额外的存储空间来存储临时数据，适合内存受限的环境。</li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80d5-bae1-cec8034ad2c3" class="">4. 实现细节</h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8044-87dd-d3528bbbf7d3" class="bulleted-list"><li style="list-style-type:disc"><strong>边界条件</strong>：在实现时，确保处理好边界条件，例如在进行插入排序时，确保索引不越界。</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80d2-9c7f-d37070f3a362" class="bulleted-list"><li style="list-style-type:disc"><strong>性能测试</strong>：在不同的数据集上测试算法的性能，尤其是对于大规模数据集，观察不同增量序列的效果。</li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8047-bc62-ea9216be15af" class="">5. 适用场景</h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8002-968a-e0fdbef7e582" class="bulleted-list"><li style="list-style-type:disc"><strong>适用性</strong>：希尔排序适合中等规模的数据集，对于小规模数据集，插入排序可能更快，而对于大规模数据集，快速排序或归并排序可能更合适。</li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80fb-b517-c89eae8d49af" class="">6.增量</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8000-a64f-e5b1e39bdee0" class="">希尔排序时间复杂度不好计算，因为gap的取值很多，导致很难去计算，因此很多书中给出的希尔排序的时间复杂度都不固定。</p></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80d5-9e26-daaeec16bbb3" class="bulleted-list"><li style="list-style-type:disc"><strong>增量序列的选择</strong>：</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80cc-95db-cad9fb371072" class="bulleted-list"><li style="list-style-type:disc">希尔排序的性能很大程度上依赖于增量序列的选择。常见的增量序列包括：		选择合适的增量序列可以显著提高排序效率。<div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80cd-93cd-c50ba8271780" class="bulleted-list"><li style="list-style-type:circle">原始的增量序列：<code>n/2, n/4, ..., 1</code></li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8046-9f0a-ea7c87284223" class="bulleted-list"><li style="list-style-type:circle">Hibbard增量序列：<code>1, 3, 7, 15, ...</code>（即 <code>2^k - 1</code>）</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80ab-81bb-fbe42b75ecb8" class="bulleted-list"><li style="list-style-type:circle">Sedgewick增量序列：<code>1, 5, 19, 41, ...</code></li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8045-9851-d875e39c7cab" class="bulleted-list"><li style="list-style-type:circle">其他更复杂的增量序列可以提供更好的性能。</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8053-8843-e3713b50cbb3" class="">7.鸣谢</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8074-9a71-ea7476b1e14b" class=""><a href="https://blog.csdn.net/2301_80191662/article/details/142302553?ops_request_misc=&amp;request_id=&amp;biz_id=102&amp;utm_term=%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-0-142302553.142^v101^pc_search_result_base6&amp;spm=1018.2226.3001.4187">【数据结构】排序算法---希尔排序（动图演示）_数据结构希尔排序-CSDN博客</a></p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8072-89d1-dbd8591bc62f" class=""><a href="https://blog.csdn.net/weixin_50886514/article/details/119045154?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522e2af662d4aa314fe39b748f35d378ee3%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&amp;request_id=e2af662d4aa314fe39b748f35d378ee3&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-119045154-null-null.142^v101^pc_search_result_base6&amp;utm_term=%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F&amp;spm=1018.2226.3001.4187">六大排序算法：插入排序、希尔排序、选择排序、冒泡排序、堆排序、快速排序-CSDN博客</a></p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8024-b892-c1d22e60143d" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

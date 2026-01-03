@@ -1,0 +1,833 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>bfs广搜(看这一篇就够了)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="24b9d84a-b678-803c-8bae-ddcf261eb7ce" class="page sans"><header><div class="page-header-icon undefined"><img class="icon notion-static-icon" src="https://www.notion.so/icons/document_red.svg"/></div><h1 class="page-title" dir="auto">bfs广搜(看这一篇就够了)</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>创建者</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocI05DXY3twXoSrPO2Eh2zr8xlEm_8PfhbXI0Vd2LTEuYHyj4A=s100" class="icon user-icon"/>lu cas</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>类别</th><td><span class="selected-value select-value-color-gray">c++</span><span class="selected-value select-value-color-yellow">算法</span><span class="selected-value select-value-color-blue">题解</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>创建时间</th><td><time>@2025年8月10日 17:42</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-802f-a9a1-c067e81cbbab" class="">基本概念</h1></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8095-9183-f1a4c5237345" class="">搜索算法，就是从一个点出发，到另一个点的路径。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80b3-bce6-c672a8ab6e48" class="">广度优先搜索：简称为 BFS。直观地讲，它其实就是一种地毯式层层推进的搜索策略，即先查找离起始顶点最近的，然后是次近的，依次往外搜索。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8078-9a92-d732bcd4f62f" class="">例子</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8003-ab7a-fa41eba5db54" class="">如下图：</p></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8015-840c-c0b3ad54ab9b" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/5cff1de57af4f1d550aa0d0e6ee272e9.png"><img style="width:197.9976806640625px" src="https://i-blog.csdnimg.cn/blog_migrate/5cff1de57af4f1d550aa0d0e6ee272e9.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8088-a620-e74964b52fb1" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-807a-b447-c02de82b187e" class="">将起点0放到队列中</p></div><div style="display:contents" dir="ltr"><table id="24b9d84a-b678-8059-83ff-d6397853cb26" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24b9d84a-b678-80a2-83f3-f2115173e2c9"><td id="at;~" class="">0</td><td id="Rxd|" class=""></td><td id="~bEj" class=""></td><td id="vIW=" class=""></td><td id="Lr@T" class=""></td><td id="cT|R" class=""></td><td id="inUD" class=""></td><td id="mlWs" class=""></td><td id="I}fI" class=""></td><td id="~GTs" class=""></td><td id="_SDx" class=""></td><td id="Q^nk" class=""></td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-800f-b62e-db85627c733e" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/1f9086830eea6037fee900f12228c804.png"><img style="width:208.9930419921875px" src="https://i-blog.csdnimg.cn/blog_migrate/1f9086830eea6037fee900f12228c804.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-801e-b529-d99870a6a0fc" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80c9-8632-f254259081a5" class="">
+</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80fe-9b8a-c77113ea430a" class="">取出队首的0，搜索0的相邻点，得到1、3点，压入队列。</p></div><div style="display:contents" dir="ltr"><table id="24b9d84a-b678-80b7-ba40-e627f4603fd0" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24b9d84a-b678-80d6-bd6b-d72f4ad0e60c"><td id="D^l_" class=""></td><td id="sZmm" class="">1</td><td id="vZ&lt;m" class="">3</td><td id="&gt;D{?" class=""></td><td id="oomA" class=""></td><td id="LCsr" class=""></td><td id="Ib^{" class=""></td><td id="Z|rW" class=""></td><td id="AJB\" class=""></td><td id="OP@m" class=""></td><td id="mZBa" class=""></td><td id=";X{B" class=""></td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8068-b35a-c85ff6c600bb" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/a380364d5e2de9918d64a4a2afc4cf8c.png"><img style="width:183.9930419921875px" src="https://i-blog.csdnimg.cn/blog_migrate/a380364d5e2de9918d64a4a2afc4cf8c.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-809e-9e9e-ea27b2d1cc3d" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80cd-96c4-d5aca826a3ac" class="">取出队首的1，搜索1的相邻点，得到2、4点，压入队列。</p></div><div style="display:contents" dir="ltr"><table id="24b9d84a-b678-8012-939e-ee6a38f95aab" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24b9d84a-b678-8074-bdce-e08902fe418b"><td id="fPtS" class=""></td><td id="|YHO" class=""></td><td id="&lt;rjC" class="">3</td><td id="hlk&lt;" class="">2</td><td id="odyf" class="">4</td><td id="Xf|q" class=""></td><td id="?p_Y" class=""></td><td id="ReId" class=""></td><td id="Qcxq" class=""></td><td id="N|gg" class=""></td><td id="`YsU" class=""></td><td id="Ht`Q" class=""></td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80cd-ba5e-c6ee8a6a86bd" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/700b3f2eba6167803b3bc7cb88d492b5.png"><img style="width:183.9930419921875px" src="https://i-blog.csdnimg.cn/blog_migrate/700b3f2eba6167803b3bc7cb88d492b5.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80d1-a3bd-fd706dbd5047" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8017-bd14-d850d978e022" class="">取出队首的3，搜索3的相邻点，3相邻的点都已经被访问过了</p></div><div style="display:contents" dir="ltr"><table id="24b9d84a-b678-8026-bf40-d315fac63b4d" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24b9d84a-b678-8056-861b-dd4562b42df4"><td id="&gt;`hp" class=""></td><td id="Meo=" class=""></td><td id="yU=X" class=""></td><td id="DxU|" class="">2</td><td id="Zw[c" class="">4</td><td id="VYr{" class=""></td><td id="&lt;~Ma" class=""></td><td id="aLeJ" class=""></td><td id="}DuU" class=""></td><td id="kX&gt;X" class=""></td><td id="fFu{" class=""></td><td id=":fvQ" class=""></td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8020-818d-fb211d00dd4e" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/0cd29c63e677e092bebdfa4d03213b26.png"><img style="width:220.995361328125px" src="https://i-blog.csdnimg.cn/blog_migrate/0cd29c63e677e092bebdfa4d03213b26.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-806e-9052-d933621459b1" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><ul id="24b9d84a-b678-80bd-8635-d6ef9d571b94" class="bulleted-list"><li style="list-style-type:disc">不好意思，这里画错了，6号点没有被搜索过</li></ul></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8085-9a2f-d17f19b2bed8" class="">取出队首的2，搜索2的相邻点，得到5号点，压入队列。</p></div><div style="display:contents" dir="ltr"><table id="24b9d84a-b678-80f1-8b28-d46fd274099b" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24b9d84a-b678-8071-8318-c7ebd7b20cbc"><td id="&lt;udX" class=""></td><td id="Eys?" class=""></td><td id="IjH&lt;" class=""></td><td id="\@lV" class=""></td><td id="E}Nd" class="">4</td><td id="uA`M" class="">5</td><td id=":lT@" class=""></td><td id="upfb" class=""></td><td id="nPuv" class=""></td><td id="[a}O" class=""></td><td id="EYT{" class=""></td><td id="O^:}" class=""></td></tr></div></tbody></table></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80e1-9f98-cbc70fd183f8" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/e9a7e41abbb87982df6a6baff7aed984.png"><img style="width:220.995361328125px" src="https://i-blog.csdnimg.cn/blog_migrate/e9a7e41abbb87982df6a6baff7aed984.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80cc-a736-cb6159d30ff8" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8015-a667-f55e4b4cca89" class="">取出队首的4，搜索4的相邻点，得到6号点，压入队列。</p></div><div style="display:contents" dir="ltr"><table id="24b9d84a-b678-80c1-9225-f21343cd4e15" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24b9d84a-b678-80ad-8319-ceaed7f175b2"><td id="JB~:" class=""></td><td id="U@FA" class=""></td><td id="pUbi" class=""></td><td id="&gt;pP:" class=""></td><td id="BtDN" class=""></td><td id="t{NP" class="">5</td><td id="JNOY" class="">6</td><td id="Suei" class=""></td><td id="uqVQ" class=""></td><td id="PnmJ" class=""></td><td id="a\g~" class=""></td><td id="EuIx" class=""></td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><h2 id="24b9d84a-b678-80f9-872a-ddb206858613" class="">栈和队列</h2></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8081-ace8-f482bc3ab5e2" class="">从上面的样例中，能发现一个新的概念：队列。队列是一种容器，和他相似的一个容器是栈。栈可以用到深搜当中去。栈和队列是两种重要的线性结构，他们广泛应用于软件系统当中。栈(Stack）是 先进后出 的线性表。     我们把表尾称作栈顶（top），把表头称作栈底（bottom）。不含元素的栈称为空栈。队列是一种 先进先出 的线性表。它值允许在表的一端进行插入，而在另一端进行删除元素。可以用数组来模拟实现栈和队列，但C++的STL函数自带的栈和队列的模板，关键字分别是stack(栈）和queue(队列）。</p></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8094-b739-da077914b16b" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/2b6f898413bd56567075cf4a2d910d18.png"><img style="width:417.9976806640625px" src="https://i-blog.csdnimg.cn/blog_migrate/2b6f898413bd56567075cf4a2d910d18.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80a4-aaf0-c423e3588889" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8088-b22a-d8d84037243d" class="">编辑</p></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-801c-95d6-c89c9af89aa6" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/c582e06eb1b842967e75c5791635cf6b.png"><img style="width:498.9930419921875px" src="https://i-blog.csdnimg.cn/blog_migrate/c582e06eb1b842967e75c5791635cf6b.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8085-987f-d18dbb02a453" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8045-b777-ceccf91d19f3" class="">编辑</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80cf-aeca-c343b15088fd" class="">队列的基本操作</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80f6-8c5d-d49558813269" class="">我们可以把队列当作一个特殊的数组，这个数组只能从头部取出数据，在尾巴上压入数据。 queue&lt;int&gt; q;        声明一个队列q，这个队列是用来装整数的。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8048-a3e5-d5e36eb91ffc" class=""><strong>q.empty() </strong>       <strong>如果队列为空返回true，否则返回false</strong></p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80a6-8045-d95967e4861b" class="">q.size()         返回队列中元素的个数</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80fd-93fe-e87f318657d0" class=""><strong>q.pop()         删除队列首元素但不返回其值   </strong></p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-808f-8649-ec9003b82b09" class=""><strong>q.front()        返回队首元素的值，但不删除该元素</strong></p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8014-8efc-ef4f8887cefe" class=""><strong>q.push()          在队尾压入新元素</strong></p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80ef-b9e1-c7fe5875b5f2" class="">q.back()        返回队列尾元素的值，但不删除该元素</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-801d-840a-cf785b589cb0" class="">q.swap()        交换两个队列的元素</p></div><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-806e-9d59-eb72d0a9c60a" class="">例题</h1></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80e8-bd7b-c8a14333da78" class="">小老鼠走迷宫</h3></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-809a-b8ca-ed6388074cba" class="">题目描述</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8038-96ef-cbbc2a0530a2" class="">一个N*M的迷宫矩阵由0和1组成，1表示墙壁，0表示通路。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8045-91e9-cb1922f9af30" class="">一只小老鼠从左上角即坐标（0,0）出发，只能走上下左右四个方向（不能走斜线），问小老鼠能否吃到右下角出口即坐标（N-1,M-1）处的奶酪。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80a9-b388-da713281e29e" class="">输入</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8093-a387-f8ba84896408" class="">第一行输入空格分开的两个整数，表示迷宫的行数和列数</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-809f-9450-e8b5836fd7d9" class="">然后输入N行M列的迷宫矩阵</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80d0-bd29-e5df6663f8d1" class="">输出</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80ad-88d0-e7a7348c06e0" class="">若能走到出口，输出“yes”，否则输出“no”</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80b7-ad7d-ef63459588c9" class="">样例输入</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-801a-8c41-ca89ceb626d4" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">5 5
+0 0 1 0 1
+0 0 1 0 0
+0 1 0 1 1
+0 1 0 0 0
+0 0 0 0 0
+</code></pre></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8064-86cc-f3d93728a25c" class="">样例输出</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-80d4-9984-f70bcffcf2cb" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">yes</code></pre></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80ba-b23f-dddf2917eb1a" class="">提示</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8030-b09d-e7d0b0843805" class="">M，N&lt;=2000</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80d7-b2ac-e32a046832f4" class="">代码</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-8040-9da5-fa4a2a348d5c" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">#include &lt;iostream&gt;#include &lt;queue&gt;using namespace std;
+bool bfs(int sx,int sy);
+int n,m,book[2021][2021],wz[4][2]={{1,0},{0,1},{-1,0},{0,-1}};
+struct noda
+{
+    int x,y;
+}s;
+queue&lt;noda&gt; q;//声明一个装结构体node的队列
+
+int main()
+{
+    cin&gt;&gt;m&gt;&gt;n;
+    for(int i=0;i&lt;m;i++)
+    {
+        for(int j=0;j&lt;n;j++)
+        {
+            cin&gt;&gt;book[i][j];
+        }
+    }
+    book[0][0]=1;
+    if(bfs(0,0)==1) cout&lt;&lt;&quot;yes&quot;;
+    else cout&lt;&lt;&quot;no&quot;;
+    return 0;
+}
+bool bfs(int sx,int sy)
+{
+    s.x=sx;s.y=sy;//把起点压入队列
+    q.push(s);
+
+    while(!q.empty())//只要队列不为空
+    {
+        s=q.front();q.pop();//取出队首元素，删除队首元素
+
+        int xj,yj;
+        xj=s.x;yj=s.y;
+        for(int i=0;i&lt;4;i++)//往四个方向走
+        {
+            int hx=xj+wz[i][0];
+            int hy=yj+wz[i][1];
+            if(hx&gt;=0&amp;&amp;hx&lt;m&amp;&amp;hy&gt;=0&amp;&amp;hy&lt;n&amp;&amp;book[hx][hy]==0)//如果这个点合法
+            {
+                s.x=hx;s.y=hy;
+                q.push(s);		//把这个点压入队列
+                book[hx][hy]=1;//标记这个点已经走过
+                if(hx==m-1&amp;&amp;hy==n-1)return 1;//找到终点
+             }
+        }
+    }
+    return 0;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80ac-9b87-c71df6044f63" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8029-aead-fb736bc7c264" class="">最少步数</h3></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8033-9585-de4bb8bd6b42" class="">题目描述</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8039-9576-e44bd2a8cb56" class="">在各种棋中，棋子的走法总是一定的，如中国象棋中马走“日”。有一位小学生就想如果马能有两种走法将增加其趣味性，因此，他规定马既能按“日”走，也能如象一样走“田”字。他的同桌平时喜欢下围棋，知道这件事后觉得很有趣，就想试一试，在一个（100*100）的围棋盘上任选两点A、B，A点放上黑子，B点放上白子，代表两匹马。棋子可以按“日”字走，也可以按“田”字走，俩人一个走黑马，一个走白马。谁用最少的步数走到左上角坐标为(1,1)的点时，谁获胜。现在他请你帮忙，给你A、B两点的坐标，想知道两个位置到（1,1）点可能的最少步数。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8060-9a0b-d917f22bb08d" class="">输入</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8080-9985-c86354e80607" class="">两行，每行两个正整数，表示马所在的坐标。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8022-a270-e18e00432d3b" class="">输出</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80d1-95b9-f7a12c8e88bf" class="">两行，所走的最少步数。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80f0-96a9-e60aacccf8fe" class="">样例输入</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-8055-942d-eda09973bc4c" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">12 16
+18 10
+</code></pre></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8017-9de0-d7833260adc9" class="">样例输出</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-8044-a011-e1db493b1887" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">8
+9</code></pre></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80ab-89d4-f36f254a0af7" class="">代码</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-806b-935c-ec4de17c3ecf" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">#include &lt;iostream&gt;#include &lt;queue&gt;using namespace std;
+int bfs(int sx,int sy,int k);
+int ax,ay,book[110][110];
+int tiao[12][2]={{-2,-1},{-2,-2},{-1,-2},{1,-2},{2,-2},{2,-1},{2,1},{2,2},{1,2},{-1,2},{-2,2},{-2,1}};
+struct noda
+{
+    int x,y,k;
+}s;
+queue&lt;noda&gt; q;//声明一个装结构体noda的队列
+
+int main()
+{
+    while(cin&gt;&gt;ax&gt;&gt;ay)
+   	{
+   		while(!q.empty())
+   		{
+   			q.pop();
+   		}
+   		for(int i=0;i&lt;110;i++)
+		{
+			for(int j=0;j&lt;110;j++)
+			{
+				book[i][j]=0;
+			}
+		}
+   	    book[ax][ay]=1;
+	    int c=bfs(ax,ay,0);
+   	    cout&lt;&lt;c&lt;&lt;endl;
+   	}
+    return 0;
+}
+int bfs(int sx,int sy,int k)
+{
+    s.x=sx;
+	s.y=sy;
+	s.k=k;
+    q.push(s);//把起点压入队列
+    while(!q.empty())//只要队列不为空
+    {
+        s=q.front();q.pop();//取出队首元素，删除队首元素
+
+        int xj,yj,b;
+        xj=s.x;yj=s.y;b=s.k;
+        for(int i=0;i&lt;12;i++)
+        {
+            int hx=xj+tiao[i][0];
+            int hy=yj+tiao[i][1];
+            if(hx&gt;=1&amp;&amp;hx&lt;=100&amp;&amp;hy&gt;=1&amp;&amp;hy&lt;=100&amp;&amp;book[hx][hy]==0)//如果这个点合法
+	        {
+	            s.x=hx;s.y=hy;s.k=b+1;
+	            q.push(s);//把这个点压入队列
+	            book[hx][hy]=1;//标记这个点已经走过
+	            if(hx==1&amp;&amp;hy==1)
+	            {
+	            	return s.k;
+	            }
+	        }
+    	}
+	}
+    return 0;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80c9-b592-ee63a2c4be0d" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-80c3-b325-f2e74c9f020f" class="">细胞 cell，闭合曲线面积 square，营救这三道题也可以自己去做</h1></div><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-8002-b8c1-d25caff5d34d" class="">点个赞吧！！！</h1></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-800e-8f76-d18469dd5dd8" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
