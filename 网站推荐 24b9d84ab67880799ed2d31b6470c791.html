@@ -1,0 +1,713 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>网站推荐</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="24b9d84a-b678-8079-9ed2-d31b6470c791" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">⭐</span></div><h1 class="page-title" dir="auto">网站推荐</h1><p class="page-description" dir="auto">欢迎浏览本页面精选的网站推荐合集，涵盖技术、工具、学习资源等多个领域，助你快速找到优质实用的网站，提升工作和学习效率。</p></header><div class="page-body"><table class="collection-content"><thead><tr><th><span class="icon property-icon"><img src="https://www.notion.so/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>名称</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>分类</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>推荐指数</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>标签</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/description_gray.svg" style="width:14px;height:14px;display:block"/></span>简介</th><th><span class="icon property-icon"><img src="https://www.notion.so/icons/link_gray.svg" style="width:14px;height:14px;display:block"/></span>链接</th></tr></thead><tbody><tr id="24d9d84a-b678-80e4-9ca0-e21761d55ef5"><td class="cell-title"><a href="TopHub%2024d9d84ab67880e49ca0e21761d55ef5.html">TopHub </a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">热榜聚合、热点追踪</td><td class="cell-hhtX">汇总知乎、微博、百度、V2EX、GitHub 等多个平台的热榜与热搜内容，便于用户一站式追踪全网热点与趋势。</td><td class="cell-_IS]"><a href="https://tophub.today/" class="url-value">https://tophub.today/</a></td></tr><tr id="24d9d84a-b678-809f-93cd-fdfc13582aa6"><td class="cell-title"><a href="SkylineWebcams%2024d9d84ab678809f93cdfdfc13582aa6.html">SkylineWebcams</a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐⭐</span></td><td class="cell-AgK_">在线直播、城市景观、实况摄像头</td><td class="cell-hhtX">汇集全球数千台高清实时摄像头，覆盖城市景观、海滩、自然风光等地标，允许用户随时通过网页观看世界各地的实时景象。</td><td class="cell-_IS]"><a href="https://www.skylinewebcams.com/" class="url-value">https://www.skylinewebcams.com/</a></td></tr><tr id="24d9d84a-b678-807f-b669-db6a959feef5"><td class="cell-title"><a href="SimilarSites%2024d9d84ab678807fb669db6a959feef5.html">SimilarSites</a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">网站推荐、相似网站</td><td class="cell-hhtX">提供根据你当前访问的网站推荐相关或类似网站的服务，并推出 Chrome 插件帮助用户轻松探索相关网页资源。</td><td class="cell-_IS]"><a href="https://www.similarsites.com/" class="url-value">https://www.similarsites.com/</a></td></tr><tr id="24d9d84a-b678-80ea-9bcf-e6ece32001ff"><td class="cell-title"><a href="CrazyGames%2024d9d84ab67880ea9bcfe6ece32001ff.html">CrazyGames</a></td><td class="cell-_\;t">游戏</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">在线小游戏、网页游戏</td><td class="cell-hhtX">比利时创立的在线游戏网站，拥有约 4500 款浏览器小游戏，类型涵盖动作、益智、体育等，提供高质量和多样的游戏体验。</td><td class="cell-_IS]"><a href="https://www.crazygames.com/" class="url-value">https://www.crazygames.com/</a></td></tr><tr id="24d9d84a-b678-80a3-8aa0-f3cbf7c9d825"><td class="cell-title"><a href="Poki%2024d9d84ab67880a38aa0f3cbf7c9d825.html">Poki</a></td><td class="cell-_\;t">游戏</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐⭐</span></td><td class="cell-AgK_">在线小游戏、网页游戏</td><td class="cell-hhtX">提供超千款无需下载、无需登录的免费在线游戏，支持 PC、手机和平板，类型丰富，适合各种年龄与偏好用户。</td><td class="cell-_IS]"><a href="https://poki.com/" class="url-value">https://poki.com/</a></td></tr><tr id="24d9d84a-b678-80bc-a068-c0eb086f44dc"><td class="cell-title"><a href="Pixabay%2024d9d84ab67880bca068c0eb086f44dc.html">Pixabay</a></td><td class="cell-_\;t">资源</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">图片素材</td><td class="cell-hhtX"> 免费的免版税素材库，提供照片、插图、矢量图、视频和音乐，内容支持商业使用，无需授权或署名（依据 Pixabay 内容许可）。内容丰富，覆盖多种主题与媒介。</td><td class="cell-_IS]"><a href="https://pixabay.com/" class="url-value">https://pixabay.com/</a></td></tr><tr id="24d9d84a-b678-80e7-a912-e29e0d6ab503"><td class="cell-title"><a href="Remove%20photos%2024d9d84ab67880e7a912e29e0d6ab503.html">Remove.photos</a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐</span></td><td class="cell-AgK_">图像处理、去背景</td><td class="cell-hhtX">一键自动移除图片背景，支持透明背景和更换背景，适合人物、产品、动物等多种类型图像。</td><td class="cell-_IS]"><a href="https://remove.photos/" class="url-value">https://remove.photos/</a></td></tr><tr id="24d9d84a-b678-8036-b25f-e08a2cca2c18"><td class="cell-title"><a href="Perplexity%20AI%2024d9d84ab6788036b25fe08a2cca2c18.html">Perplexity AI</a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐⭐</span></td><td class="cell-AgK_">搜索、AI问答</td><td class="cell-hhtX">AI 驱动的对话式搜索引擎，提供实时回答并带引用来源，支持上下文追问，适合快速获取信息与深入研究。</td><td class="cell-_IS]"><a href="https://www.perplexity.ai/" class="url-value">https://www.perplexity.ai/</a></td></tr><tr id="24d9d84a-b678-8060-9a5a-f395c03cd03f"><td class="cell-title"><a href="TinyWow%20Tools%2024d9d84ab67880609a5af395c03cd03f.html">TinyWow Tools</a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">PDF工具,在线转换</td><td class="cell-hhtX">提供免费的在线 PDF 编辑、合并、转换、压缩等多功能工具，无需安装，上传文件后会在1小时内自动删除，保证隐私安全。</td><td class="cell-_IS]"><a href="https://tinywow.com/tools/pdf" class="url-value">https://tinywow.com/tools/pdf</a></td></tr><tr id="24c9d84a-b678-80de-b2b3-e3d714925d2e"><td class="cell-title"><a href="ICO%20Converter%2024c9d84ab67880deb2b3e3d714925d2e.html">ICO Converter</a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐</span></td><td class="cell-AgK_">图标,格式转换</td><td class="cell-hhtX">在线转换图像为ICO格式的实用工具</td><td class="cell-_IS]"><a href="https://www.icoconverter.com/" class="url-value">https://www.icoconverter.com/</a></td></tr><tr id="24c9d84a-b678-805b-ab76-c17fa65679d2"><td class="cell-title"><a href="LittleSkin%2024c9d84ab678805bab76c17fa65679d2.html">LittleSkin</a></td><td class="cell-_\;t">游戏</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">游戏,皮肤,我的世界</td><td class="cell-hhtX">专业的Minecraft皮肤托管服务平台</td><td class="cell-_IS]"><a href="https://littleskin.cn/" class="url-value">https://littleskin.cn/</a></td></tr><tr id="24c9d84a-b678-80b3-96af-fa09c7a64d74"><td class="cell-title"><a href="YouTube%2024c9d84ab67880b396affa09c7a64d74.html">YouTube</a></td><td class="cell-_\;t">娱乐</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐⭐</span></td><td class="cell-AgK_">视频,学习,娱乐</td><td class="cell-hhtX">全球最大的视频分享平台，涵盖各类优质内容</td><td class="cell-_IS]"><a href="https://www.youtube.com/" class="url-value">https://www.youtube.com/</a></td></tr><tr id="24b9d84a-b678-8184-b195-d6b96fe53392"><td class="cell-title"><a href="%E6%89%A3%E5%AD%90%2024b9d84ab6788184b195d6b96fe53392.html">扣子</a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐</span></td><td class="cell-AgK_">AI,聊天,社区</td><td class="cell-hhtX">中文 AI 对话与知识分享平台，支持多种 AI 模型交互。</td><td class="cell-_IS]"><a href="https://coze.com" class="url-value">https://coze.com</a></td></tr><tr id="24b9d84a-b678-8123-8e59-e0504c0ae75a"><td class="cell-title"><a href="X%2024b9d84ab67881238e59e0504c0ae75a.html">X</a></td><td class="cell-_\;t">社交</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐</span></td><td class="cell-AgK_">新闻,短文,互动</td><td class="cell-hhtX">原 Twitter，全球热门社交平台，实时获取资讯与互动。</td><td class="cell-_IS]"><a href="https://x.com" class="url-value">https://x.com</a></td></tr><tr id="24b9d84a-b678-8130-8b40-c321ced8f107"><td class="cell-title"><a href="Gmail%2024b9d84ab67881308b40c321ced8f107.html">Gmail</a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">邮箱,谷歌</td><td class="cell-hhtX">谷歌提供的免费电子邮箱服务，功能强大、界面简洁。</td><td class="cell-_IS]"><a href="https://mail.google.com" class="url-value">https://mail.google.com</a></td></tr><tr id="24b9d84a-b678-81e1-9dc4-d4ae7e6b0e83"><td class="cell-title"><a href="Minecraft%20Wiki%2024b9d84ab67881e19dc4d4ae7e6b0e83.html">Minecraft Wiki</a></td><td class="cell-_\;t">游戏</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">沙盒,百科</td><td class="cell-hhtX">Minecraft 玩家必备的百科，全方位介绍游戏内容与机制。</td><td class="cell-_IS]"><a href="https://minecraft.fandom.com" class="url-value">https://minecraft.fandom.com</a></td></tr><tr id="24b9d84a-b678-819f-8ba5-d57b42e80c6c"><td class="cell-title"><a href="%E6%B4%9B%E8%B0%B7%2024b9d84ab678819f8ba5d57b42e80c6c.html">洛谷</a></td><td class="cell-_\;t">技术</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">算法,竞赛,OJ</td><td class="cell-hhtX">在线评测平台，支持算法题练习与竞赛，适合编程训练。</td><td class="cell-_IS]"><a href="https://www.luogu.com.cn" class="url-value">https://www.luogu.com.cn</a></td></tr><tr id="24b9d84a-b678-8109-8920-f921e8001fa7"><td class="cell-title"><a href="CSDN%2024b9d84ab67881098920f921e8001fa7.html">CSDN</a></td><td class="cell-_\;t">技术</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">编程,博客,社区</td><td class="cell-hhtX">国内最大的程序员社区，提供技术文章、问答和开发资源。</td><td class="cell-_IS]"><a href="https://www.csdn.net" class="url-value">https://www.csdn.net</a></td></tr><tr id="24b9d84a-b678-8119-bc0c-c5950521f40d"><td class="cell-title"><a href="ChatGPT%2024b9d84ab6788119bc0cc5950521f40d.html">ChatGPT</a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐⭐</span></td><td class="cell-AgK_">AI,聊天,写作</td><td class="cell-hhtX">强大的人工智能对话助手，可用于写作、编程、学习与创作。</td><td class="cell-_IS]"><a href="https://chat.openai.com" class="url-value">https://chat.openai.com</a></td></tr><tr id="24b9d84a-b678-811f-b1ec-d2a6bdcbd945"><td class="cell-title"><a href="Bilibili%2024b9d84ab678811fb1ecd2a6bdcbd945.html">Bilibili</a></td><td class="cell-_\;t">娱乐</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">视频,二次元,学习</td><td class="cell-hhtX">国内知名的视频弹幕网站，涵盖动画、游戏、知识、娱乐等内容。</td><td class="cell-_IS]"><a href="https://www.bilibili.com" class="url-value">https://www.bilibili.com</a></td></tr><tr id="24b9d84a-b678-816d-8f4e-f3bce6559158"><td class="cell-title"><a href="Notion%2024b9d84ab678816d8f4ef3bce6559158.html">Notion</a></td><td class="cell-_\;t">工具</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐</span></td><td class="cell-AgK_">笔记,协作</td><td class="cell-hhtX">集笔记、文档、数据库于一体的生产力工具。</td><td class="cell-_IS]"><a href="https://notion.so" class="url-value">https://notion.so</a></td></tr><tr id="24b9d84a-b678-81cc-88a0-f516a7deade7"><td class="cell-title"><a href="GitHub%2024b9d84ab67881cc88a0f516a7deade7.html">GitHub</a></td><td class="cell-_\;t">技术</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐⭐</span></td><td class="cell-AgK_">代码托管,开源</td><td class="cell-hhtX">全球领先的代码托管和协作平台。</td><td class="cell-_IS]"><a href="https://github.com" class="url-value">https://github.com</a></td></tr><tr id="24f9d84a-b678-80e0-a8b5-c6fc7144b8fd"><td class="cell-title"><a href="MyFreeMP3%2024f9d84ab67880e0a8b5c6fc7144b8fd.html">MyFreeMP3</a></td><td class="cell-_\;t">音乐</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐⭐⭐</span></td><td class="cell-AgK_">音乐搜索、MP3下载、免费听歌</td><td class="cell-hhtX">一个整合多平台音源的在线音乐搜索工具，支持搜索并免费下载包括网易云、QQ音乐、酷狗等平台的歌曲，涵盖大量中文与外文热门歌曲。</td><td class="cell-_IS]"><a href="https://2024.myfreemp3juices.cc" class="url-value">https://2024.myfreemp3juices.cc</a></td></tr><tr id="24f9d84a-b678-8024-a434-f4782710e5b9"><td class="cell-title"><a href="wikiHow%2024f9d84ab6788024a434f4782710e5b9.html">wikiHow</a></td><td class="cell-_\;t">知识</td><td class="cell-&lt;=}G"><span class="selected-value select-value-color-default">⭐⭐⭐</span></td><td class="cell-AgK_">教程、生活技巧、技能学习</td><td class="cell-hhtX">全球知名的图文教程网站，涵盖生活、健康、科技、手工等多个领域，提供循序渐进的指导步骤，帮助用户快速掌握各种技能。</td><td class="cell-_IS]"><a href="https://www.wikihow.com/Main-Page" class="url-value">https://www.wikihow.com/Main-Page</a></td></tr></tbody></table><br/><br/></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

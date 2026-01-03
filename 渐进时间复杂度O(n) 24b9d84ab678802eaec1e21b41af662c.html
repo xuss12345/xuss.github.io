@@ -1,0 +1,801 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>渐进时间复杂度O(n)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="24b9d84a-b678-802e-aec1-e21b41af662c" class="page sans"><header><h1 class="page-title" dir="auto">渐进时间复杂度O(n)</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>创建者</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocI05DXY3twXoSrPO2Eh2zr8xlEm_8PfhbXI0Vd2LTEuYHyj4A=s100" class="icon user-icon"/>lu cas</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>类别</th><td><span class="selected-value select-value-color-gray">c++</span><span class="selected-value select-value-color-orange">概念</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>创建时间</th><td><time>@2025年8月10日 17:46</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8053-aeb2-d28da80671f0" class=""><strong>基本操作数</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-805c-8dd7-e9f7acf74208" class="">算法的运行速度受计算机性能的影响，所以通常考虑算法效率的不是算法运行的实际用时，而是算法运行所需要进行的基本操作的数量。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8074-80d7-e2d80f18ad22" class="">像加减乘除、访问变量、给变量赋值等都可以看作基本操作。对基本操作的计数或是估测可以作为评判算法用时的指标。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-808b-9391-eeea7b439270" class=""><strong>时间复杂度</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80be-9984-c0bbf1fd84bc" class="">在算法竞赛中，我们衡量一个算法的效率时，最重要的不是看它在某个数据规模下的用时，而是看它的用时随数据规模而增长的趋势，即 时间复杂度。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80ee-a549-dd4f873d36fb" class="">时间复杂度是指算法运行时间与问题规模之间的关系，通常用大 O 表示法来表示。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80aa-8982-f11ebb769a2f" class="">常见的时间复杂度有O(1), O(logn), O（n）, O(nlogn), O(n^2 ), O(2^n)等，其中 O(1) 表示算法的运行时间不随问题规模变化而改变，而O(2^n ) 则表示算法的运行时间随问题规模n呈指数级增长。</p></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80de-ba5a-d92c62a9db67" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/7604c4dbfb84fd2945fc5a735dc29cf2.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/blog_migrate/7604c4dbfb84fd2945fc5a735dc29cf2.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8089-8b42-f7f73c61b02a" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80f3-b341-efdb01cb8c1f" class="">编辑</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8065-97c9-df56a01fffa0" class="">变化趋势意味着我们<strong>不用纠结于具体的操作次数和n之间的精确对应关系</strong>，也就是不用看具体的函数的参数是什么，而只用看随着数据范围的增大，操作次数的变化是属于哪一类函数。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-805f-827e-d434d8d891ed" class="">例如：是常数，还是线性的，还是对数的，还是nlogn的，还是n^2的，还是2^n的，还是阶乘n!的。原因是当n变得非常大的时候，这些不同类型的函数之间的差异值才是明显的，而同一种类型之间的参数不同带来的差异就显得微不足道了，可以忽略不计。这也是为什么O(1)和O(3) 都被称作 O(1)。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-809f-b2ba-ea3a5a7ce36d" class="">例子</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-8059-b8c8-e982b15d62c5" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">for (int i = 1; i &lt;= n; i++)
+{
+     j = i;
+     j++;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-801a-8b34-c7066625142d" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-800e-a868-e4a3dc4ad940" class="">这段代码的时间复杂度O(n)的。分析代码的执行次数，第1行中<code>i=1</code>执行1次， <code>i&lt;=n</code>和<code>i++</code>分别执行n次，第2行、第3行分别执行n次，所以这段代码总共执行4n+1次。从这个结果可以看出，这个算法的耗时是随着n的变化而变化。如果n无限大的时候，1+4n 中的常量1就没有意义了，倍数4的意义也不大。因此时间复杂度直接简化为O(n)。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8021-80a6-d78b25a8d804" class="">计算次数</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8097-b2c7-c57c5a436634" class="">O(n)、O(logn)、O(n)、O(nlogn)随着n的增加，复杂度提升不大，因此这些复杂度属于效率高的算法，反观O(2^n)和O(n!)当n增加到50时，复杂度就突破十位数了，这种效率极差的复杂度最好不要出现在程序中。（tips：通常计算机每秒可以计算的次数大约是10的8次方）</p></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8046-ad91-ee634a7167cd" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/78e0995cbe0e8681e289ffa29b2071f6.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/blog_migrate/78e0995cbe0e8681e289ffa29b2071f6.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-801c-84b5-d9494d0b8666" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-803b-a798-dc48e055d7fc" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80a2-9413-cfede05ef239" class=""><strong>最坏、最好、平均</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8007-b824-f02b4e7a8d01" class="">在进行时间复杂度分析时，需要考虑算法的最好、最坏、平均情况时间复杂度。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80a0-93e0-c8dc0b062c35" class="">最好情况时间复杂度是指算法在最优输入情况下的运行时间复杂度，即在所有可能的输入情况中，算法所需的最少时间。例如，对于<a href="http://47.108.154.71/moodle/mod/page/view.php?id=103">二分查找</a>算法来说，在目标元素为中间元素的情况下，查找时间为 O(1)。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8034-a4ee-cacff772f0c0" class="">最坏情况时间复杂度是指算法在最劣输入情况下的运行时间复杂度，即在所有可能的输入情况中，算法所需的最长时间。例如，对于冒泡排序算法来说，最坏情况是需要 O(n^2) 的时间复杂度。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8024-b70a-ebc851fb2209" class="">平均情况时间复杂度是指算法在所有可能输入情况下的平均运行时间复杂度。对于某些算法来说，平均情况时间复杂度更能反映算法的运行效率，例如快速排序算法的平均情况时间复杂度为 O(nlogn)，而最坏时间复杂度是 O(n^2)。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80a6-984e-c6f130b2c35d" class="">我们通常所说的时间复杂度大 O是指算法的最坏时间复杂度。这是因为最坏时间复杂度能够给出算法的最长运行时间，可以帮助我们评估算法的性能并预估程序的执行时间。此外，最坏时间复杂度也是一种更保守的衡量指标，即使算法在最坏情况下表现较好，也能够保证算法的性能不会低于最坏时间复杂度。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-805a-aed1-c255356fff7e" class=""><strong>常见的时间复杂度</strong></h3></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80ba-8cb1-ebb1c0ed11f5" class=""><strong>常数阶O(1)</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80c2-bd04-e03a542035c7" class="">代码执行次数是一个常数，不随n的变化而变化，那这个代码的时间复杂度就都是O(1)，如下的代码中虽然含有for循环，但循环次数是100次，不随问题规模变化而变化，因此是常数级O(1)的时间复杂度：</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-8061-840a-f8fc7e751895" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">for(int i = 1; i &lt;= 100; i++)
+{
+      cnt += i;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-807f-a056-e91461e1c1ca" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8066-8c88-e03cc3627854" class=""><strong>线性阶O(n)</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8038-b699-c7b69449f777" class="">这段代码，for循环里面的代码会执行n遍，因此它消耗的时间是随着n的变化而变化的，因此这类代码都可以用O(n)来表示它的时间复杂度。</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-8054-b0fa-e145f2b3eab8" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">for(int i = 1; i &lt;= n; i++)
+{
+      cnt += i;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-809e-87d7-c2ab71b08a23" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80cb-aa20-e158872907c2" class=""><strong>对数阶O(logn)</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8097-8957-ff852f513808" class="">同样是for循环，但这段代码的时间复杂度是O(logn)，因此不能单纯认为for循环就一定是O(n)的。</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-8093-a2dd-ff619ced40d9" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">for(int i = 1; i &lt;= n; i *= 2)
+{
+    cnt++;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80e3-a1e2-fea1e38e2b9e" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8038-b24c-ea301eca7fc7" class=""><strong>线性对数阶O(nlogn)</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8069-8910-e4e3b9ede434" class="">线性对数阶O(nlogn) 其实非常容易理解，将时间复杂度为O(logn) 的代码循环n遍的话，那么它的时间复杂度就是 n×O(logn)。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-801a-b473-d2ae8b4f33c3" class="">就拿上面的代码加一点修改来举例：</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-80e5-85e5-dedb00d7f5b2" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">for(int i = 1; i &lt;= n; i++)
+{
+    for(int j = 1; j &lt;= n; j *= 2)
+        {
+                cnt++;
+        }
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80ea-8023-c5f829e4df74" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80c4-8fc3-f537d9a743cf" class=""><strong>平方阶O(n^2 )</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8090-bbdd-c6cde7c16ca0" class="">平方阶O(n^2)就更容易理解了，如果把O(n)的代码再嵌套循环一遍，它的时间复杂度就是 O(n^2) 了。</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-800d-9c55-f654ff590373" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">for(int i = 1; i &lt;= n; i++)
+{
+        for(int j = 1; j &lt;= n; j++)
+        {
+               cnt++;
+         }
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8018-b799-f1b96a30d4c6" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8086-9d7c-d21df73f0077" class="">阶乘阶O(n!)</h3></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8061-987c-d14a2db14787" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/8e56ee98fd419215cc9379eb716ea90b.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/blog_migrate/8e56ee98fd419215cc9379eb716ea90b.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80e5-b81d-d65fe2350b98" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8065-b438-cb53d14fb51a" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8074-8e1c-d521ee4fc0ce" class="">指数阶O(2^n)</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-8044-b937-fc8d93da911c" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">void f(int n)
+{
+    if(n==1)
+    {
+        return 1;
+    }
+	else
+	{
+	    return f(n-1)+f(n-2);
+	}
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8018-b7c3-ffed3e15b175" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-803e-9f00-f99039459025" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/579b56ffe962e0e33456a040692548aa.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/blog_migrate/579b56ffe962e0e33456a040692548aa.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8054-bfc1-cc60b2b85d61" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80e0-b8bd-e7eeadb4cd56" class="">彩蛋</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-805b-bc73-e2fcaae061a9" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">#include &lt;bits/stdc++.h&gt;using namespace std;
+int main()
+{
+	cout&lt;&lt;&quot;O(1):&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;int n=100;&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;int a=n;&quot;&lt;&lt;endl;
+	cout&lt;&lt;endl;
+	cout&lt;&lt;&quot;O(logn):&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;while(i&lt;=n)&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;{&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   i*=2;&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;}&quot;&lt;&lt;endl;
+	cout&lt;&lt;endl;
+	cout&lt;&lt;&quot;O(n):&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;for(int i=1;i&lt;=n;i++)&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;{&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   cout&lt;&lt;1;&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;}&quot;&lt;&lt;endl;
+	cout&lt;&lt;endl;
+	cout&lt;&lt;&quot;O(nlogn)(logn重复n遍):&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;for(int i = 1; i &lt;= n; i++)&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;{&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;    for(int j = 1; j &lt;= n; j *= 2)&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;    {&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;         cnt++;&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;    }&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;}&quot;&lt;&lt;endl;
+	cout&lt;&lt;endl;
+	cout&lt;&lt;&quot;O(n*n):&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;for(int i=1;i&lt;=n;i++)&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;{&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   for(int j=1;j&lt;=n;j++)&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   {&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;      cout&lt;&lt;1;&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   }&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;}&quot;&lt;&lt;endl;
+	cout&lt;&lt;endl;
+	cout&lt;&lt;&quot;O(2^n):&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;void f(int n)&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;{&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   if(n==1)&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   {&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;       return 1;&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   }&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   else&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   {&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;       return f(n-1)+f(n-2);&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;   }&quot;&lt;&lt;endl;
+	cout&lt;&lt;&quot;}&quot;&lt;&lt;endl;
+	return 0;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8009-bef3-da69df8d30a9" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8064-9d66-cd6eb2d390e3" class="">learn more!!!</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8037-964c-de530b6abb75" class=""><a href="https://www.bigocheatsheet.com/">Big-O Algorithm Complexity Cheat Sheet (Know Thy Complexities!) @ericdrowell</a></p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80a0-9301-ebd69b10ac14" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

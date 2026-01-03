@@ -1,0 +1,800 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>最长不下降子序列LIS</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="24b9d84a-b678-808e-838c-c9c2c8ab57b2" class="page sans"><header><div class="page-header-icon undefined"><img class="icon notion-static-icon" src="https://www.notion.so/icons/document_red.svg"/></div><h1 class="page-title" dir="auto">最长不下降子序列LIS</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>创建者</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocI05DXY3twXoSrPO2Eh2zr8xlEm_8PfhbXI0Vd2LTEuYHyj4A=s100" class="icon user-icon"/>lu cas</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>类别</th><td><span class="selected-value select-value-color-gray">c++</span><span class="selected-value select-value-color-yellow">算法</span><span class="selected-value select-value-color-blue">题解</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>创建时间</th><td><time>@2025年8月10日 17:19</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-8095-bdb2-cf245b90fc24" class="">最长不下降子序列</h1></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8096-b18e-c5166f1052b9" class="">题目描述</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8075-b47e-d9992f07a0eb" class="">设有由n个不相同的整数组成的数列，记为: a(1)、a(2)、……、a(n)且a(i)&lt;&gt;a(j)  (i&lt;&gt;j).例如3，18，7，14，10，12，23，41，16，24。若存在i1&lt;i2&lt;i3&lt;… &lt; ie且有a(i1)&lt;a(i2)&lt;…  &lt;a(ie)则称为长度为e的不下降序列。如上例中3，18，23，24就是一个长度为4的不下降序列，同时也有3，7，10，12，16，24长度为6的不下降序列。程序要求，当原数列给出之后，求出最长的不下降序列。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80e1-a547-eb6eab33887b" class="">输入</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80de-9c55-e79b913aded7" class="">第一行为n，表示n个数</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80f5-8767-fd8f32357190" class="">第二行n个整数，数值之间用一个空格分隔</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80b8-80f9-c5dd26dcbe21" class="">输出</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80ef-b1e6-cc141c930dfa" class="">最长不下降子序列的长度</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-808d-a363-fb19ccf9b317" class="">样例输入</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-80d3-91fc-e7e9a2c7f11e" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">7
+1 3 2 4 3 5 3</code></pre></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-802d-baec-d469e89e6a33" class="">样例输出</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-80e3-9cc0-ff485287bb7b" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">4</code></pre></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80ab-b484-cd1f2e8b1da5" class="">提示</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8050-b754-f08b0b6c6ec0" class="">n&lt;=1000</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8082-b5d5-ce77dd63cee1" class="">思路</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8085-a682-edd1bc3aa03d" class="">可以利用动态规划进行解题。在利用动态规划进行解题的时候，可以进一步划分为两种思路，分别是从前往后推理和从后往前推理。这两种思路都能够求出最长不下降子序列。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8093-a95f-ff9268950bfc" class="">1.从前往后推理：依序求出以原序列中各元素分别为子序列结尾情况下能得出的最长不下降子序列</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-804e-9189-fd322916770d" class="">例子：以序列 (11,15,12,13,5,2)为例，通过从前往后推理求出最长不下降子序列的长度</p></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8080-bf62-dd976d4bd212" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/812fcb0cff168c8537cfd2610192eb82.png"><img style="width:337.9976806640625px" src="https://i-blog.csdnimg.cn/blog_migrate/812fcb0cff168c8537cfd2610192eb82.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-807d-ac09-eb2858d67a2c" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80dd-a1f5-c3a01ef1e4c6" class="">以1号元素为子序列的结尾：此时最长不下降子序列长度为1，因为只有1号元素本身(11)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8080-a52f-f93adf45846e" class="">以2号元素为子序列的结尾：此时最长不下降子序列长度为2，此时包含1号元素和2号元素(11,15)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80e9-9390-f642d9e123ba" class="">以3号元素为子序列的结尾：此时最长不下降子序列长度为2，此时包含1号元素和3号元素(11,12)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80ff-9bec-eafebb60d12b" class="">以4号元素为子序列的结尾：此时最长不下降子序列长度为3，此时包含1、3、4号元素(11,12,13)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8010-b6fe-e72e9572389e" class="">以5号元素为子序列的结尾：此时最长不下降子序列长度为1，此时包含5号元素本身(5)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-805b-8448-fc0fe6f54b91" class="">以6号元素为子序列的结尾：此时最长不下降子序列长度为1，此时包含6号元素本身(2)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80e0-835b-d73740e258dd" class="">如下图所示：</p></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8048-a99a-ede34ed30cab" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/41563cfc5ff2c013aace9b7ccb77b9e8.png"><img style="width:335px" src="https://i-blog.csdnimg.cn/blog_migrate/41563cfc5ff2c013aace9b7ccb77b9e8.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8070-b72b-ca96031bd017" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80e2-9562-d8a880cfb80c" class="">2.从后往前推理：依序求出以原序列中各元素分别为子序列起点情况下能得出的最长不下降子序列</h3></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8070-9b0d-ea9e94336d1e" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/812fcb0cff168c8537cfd2610192eb82.png"><img style="width:337.9976806640625px" src="https://i-blog.csdnimg.cn/blog_migrate/812fcb0cff168c8537cfd2610192eb82.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8067-bed5-f24bb5c93af1" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8079-b585-c12fc4cf1685" class="">
+</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8095-9220-cbddf26471ae" class="">以6号元素为子序列的起点：此时最长不下降子序列长度为1，因为只有6号元素本身(2)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8006-96bc-c979ca3b3097" class="">以5号元素为子序列的起点：因为以5为起点，后面没有大于等于它的数字，此时最长不下降子序列长度为1，因为只有5号元素本身(5)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8029-81ae-ea765baf6bfa" class="">以4号元素为子序列的起点：因为以13为起点，后面没有大于等于它的数字，此时最长不下降子序列长度为1，因为只有4号元素本身(13)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-805f-afce-ea604ada200b" class="">以3号元素为子序列的起点：此时最长不下降子序列长度为2，此时包含3、4号元素(12,13)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80f7-8c73-c78d7467116a" class="">以2号元素为子序列的起点：此时最长不下降子序列长度为1，后面没有大于等于它的数字，此时最长不下降子序列长度为1，因为只有2号元素本身(15)</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8009-baf3-d21285fedf1b" class="">以1号元素为子序列的起点：此时最长不下降子序列长度为3，此时包含1、3、4号元素(11,12,13)</p></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8018-b980-eafb1b1897b8" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/176d513a20832028043f0a571cacb267.png"><img style="width:331.99072265625px" src="https://i-blog.csdnimg.cn/blog_migrate/176d513a20832028043f0a571cacb267.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-800c-a07c-fb2ae2106ff2" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8044-9489-ece576f0493f" class="">3.总结：不管是从前往后推理，还是从后往前推理，都能够求出最长不下降的子序列的长度，其实动态规划就是一个填表的过程，上一个阶段的结果作为求下一个阶段求解的依据。针对这道题目，当我们求出以每个元素为起点或者终点的最长不下降子序列的长度之后，我们还需要找出整个长度行中的最大值，才能找到整个序列的最长不下降子序列长度。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8034-a160-c5ea1aa3f575" class="">代码</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-808a-bef7-ee287bbb1d4a" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">#include &lt;bits/stdc++.h&gt;using namespace std;
+int n,t[1010],dp[1010],maxx;
+int main()
+{
+	cin&gt;&gt;n;
+	for(int i=1;i&lt;=n;i++)
+	{
+		cin&gt;&gt;t[i];
+	}
+	for(int i=1;i&lt;=n;i++)
+	{
+		dp[i]=1;
+	}
+	for(int i=2;i&lt;=n;i++)
+	{
+		for(int j=1;j&lt;=i-1;j++)
+		{
+			if(t[i]&gt;t[j])
+			{
+				if(dp[i]&lt;dp[j]+1)
+				{
+					dp[i]=dp[j]+1;
+					if(maxx&lt;dp[i])
+					{
+						maxx=dp[i];
+					}
+				}
+			}
+		}
+	}
+	cout&lt;&lt;maxx;
+	return 0;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8072-b95d-f63e2f30d5ff" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8079-aa17-e9faf1f4e7a6" class="">运行</h3></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8053-a112-f07eb6974264" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/70c48a29a5f3641e15f351ddac2743b8.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/blog_migrate/70c48a29a5f3641e15f351ddac2743b8.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8043-b0b5-eb5d03416c92" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8094-b05c-e50bdda3a341" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-808c-a71e-ebb8bbda9160" class="">导弹拦截</h1></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8029-8fda-dd30c3429233" class=""><strong>题目描述</strong></p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80bc-8438-f17523537c78" class="">某国为了防御敌国的导弹袭击，发展出一种导弹拦截系统。但是这种导弹拦截系统有一个缺陷：虽然它的第一发炮弹能够到达任意的高度，但是以后每一发炮弹都不能高于前一发的高度。某天，雷达捕捉到敌国的导弹来袭。由于该系统还在试用阶段，所以只有一套系统，因此有可能不能拦截所有的导弹。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8058-afe8-f9e8d4bc2689" class="">输入导弹依次飞来的高度（雷达给出的高度数据是不大于30000的正整数），计算这套系统最多能拦截多少导弹，如果要拦截所有导弹最少要配备多少套这种导弹拦截系统。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80e8-8f38-c581033e8f7e" class=""><strong>输入</strong></p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8008-b415-ffc53b5866fd" class="">输入一行：输入导弹依次飞来的高度，空格分隔，导弹数不超过1000。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80ec-a759-fa6126a51830" class=""><strong>输出</strong></p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8017-8f06-faad2d97f902" class="">输出两行：<br/>第1行： 1个整数，表示最多能拦截的导弹数。<br/>第2行： 1个整数，表示要拦截所有导弹最少要配备的系统数。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8079-88ae-d4bd4600348f" class="">样例输入</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-802d-ab90-e47b76fb7429" class="">389 207 155 300 299 170 158 65</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-806f-99d2-c46783871730" class="">样例输出</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-8084-9cc2-c68002983e17" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">6
+2</code></pre></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80f4-ac43-ea63bf464a56" class=""><strong>提示</strong></p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8072-b144-c08c61da0377" class="">LIS</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8059-a0b4-df44b3d3ab9e" class="">思路</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-804b-9791-c35ce3095adb" class="">最长不下降子序列+最长不上升子序列</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8018-8952-f7c79bae9ded" class="">代码</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-80c9-8c0d-cc3672dcd6ac" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">#include &lt;bits/stdc++.h&gt;using namespace std;
+int t[1100],dp[1100],x,dao[1100],g[1100];
+int maxx,n,ans,k,longg;
+int main()
+{
+	while(cin&gt;&gt;x)
+	{
+		n++;
+		t[n]=x;
+		dao[n]=x;
+		dp[n]=1;
+		g[n]=1;
+	}
+	for(int i=2;i&lt;=n;i++)
+	{
+		for(int j=1;j&lt;=i-1;j++)
+		{
+			if(t[i]&lt;t[j])
+			{
+				if(dp[i]&lt;dp[j]+1)
+				{
+					dp[i]=dp[j]+1;
+				}
+			}
+			if(dao[i]&gt;dao[j])
+			{
+				if(g[i]&lt;g[j]+1)
+				{
+					g[i]=g[j]+1;
+				}
+			}
+		}
+	}
+	for(int i=2;i&lt;=n;i++)
+	{
+		if(maxx&lt;dp[i])
+		{
+			maxx=dp[i];
+		}
+	}
+	for(int i=2;i&lt;=n;i++)
+	{
+		if(longg&lt;g[i])
+		{
+			longg=g[i];
+		}
+	}
+	cout&lt;&lt;maxx&lt;&lt;endl&lt;&lt;longg;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8029-b9ca-cac7f4557367" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8079-b132-c48aff9a4856" class="">运行</h3></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-809a-a2ab-fbfc87f40d66" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/a6f60fe052b4b8934b5e63425d9bffb7.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/blog_migrate/a6f60fe052b4b8934b5e63425d9bffb7.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8057-8a46-dff3c088b596" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8027-af29-c929e6446b7b" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80e5-a4ac-f41f69c00c57" class="">如果你们发现没有输出就对了，要输入^z</h3></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80d3-a7f6-f635c3a0661f" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/d632f7030d4e0e298818f79e7d312857.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/blog_migrate/d632f7030d4e0e298818f79e7d312857.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-80d4-800a-cc29f19c5443" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8017-acbf-ec56c31252e2" class="">这样照样100分！！！</h3></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-804d-9569-e4b02f5259a4" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/d78e90c01175a5b5aa3a389fd74aa6a2.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/blog_migrate/d78e90c01175a5b5aa3a389fd74aa6a2.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8022-b0b5-d573508fffa2" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8083-88f9-dc2434b6ec21" class="">
+</p></div><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-8048-ac3e-e37b7bbcbd8c" class="">记得点个赞哟！不要当白嫖党！！！</h1></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-804a-9bf5-f5baca3e89ec" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

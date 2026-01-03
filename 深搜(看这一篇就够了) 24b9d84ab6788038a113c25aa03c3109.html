@@ -1,0 +1,817 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>深搜(看这一篇就够了)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="24b9d84a-b678-8038-a113-c25aa03c3109" class="page sans"><header><div class="page-header-icon undefined"><img class="icon notion-static-icon" src="https://www.notion.so/icons/document_red.svg"/></div><h1 class="page-title" dir="auto"><strong>深搜(看这一篇就够了)</strong></h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>创建者</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocI05DXY3twXoSrPO2Eh2zr8xlEm_8PfhbXI0Vd2LTEuYHyj4A=s100" class="icon user-icon"/>lu cas</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>类别</th><td><span class="selected-value select-value-color-gray">c++</span><span class="selected-value select-value-color-yellow">算法</span><span class="selected-value select-value-color-blue">题解</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>创建时间</th><td><time>@2025年8月10日 17:36</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-8088-8acd-d864e87dd49d" class="">深搜简介</h1></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80ea-bf24-f2fa14c7489a" class="">深搜是一种对数串或图形进行遍历的算法。它会从起点像树状图一样向下进行探索，如果发现不能到达目标解，那就返回到上一个节点，然后从另一条路开始走到底 ，这种尽量往深处走的概念即是深度优先的概念。回溯是一种选优搜索法，又称为试探法，按选优条件向前搜索，以达到目标。但当探索到某一步时，发现原先选择并不优或达不到目标，就退回一步重新选择，这种走不通就退回再走的技术为回溯法，而满足回溯条件的某个状态的点称为“回溯点”。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8024-9b93-de60b997995d" class="">深度优先搜索是对图进行搜索的算法，目的也都是从起点开始搜 索直到到达指定顶点（终点）。深度优先搜索会沿着一条路径不断往下搜索直到不能再继续为止，然后再折返，开始搜索下一条候补路径。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8015-9140-d843083bb4d6" class="">深搜大概可以分为两种：</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80d3-a667-c99c2cf6685b" class="">全排列问题</h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-809d-812e-ee35ed038b4b" class="">一种需要将规定条件下的所有情况输出的问题</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8094-9a65-d1ab1f497224" class="">就是填空，要输出的东西是一个个空，每次用循环来枚举填的空的范围，找到符和要求的数，从而填空。填完一个空又去填下一个空。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80de-80ad-fb1876e1d8fb" class="">经典例题：</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80b1-b7da-f9209893316d" class=""><strong>题目描述</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8057-a007-f17ac0e26d10" class="">输出自然数1~n所有不重复的排列，即n的全排列，要求所产生的任一数字序列中不允许出现重复数字。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8075-8eb5-cf84ec6081d1" class=""><strong>输入</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-800e-9a1a-dd660f521b03" class="">1&lt;=n&lt;=9</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-801a-b848-fa756755c0fa" class=""><strong>输出</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8073-8716-edb2762ffd5f" class="">由1~n组成的所有不重复的数字序列。每行一个序列</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8090-bd94-edd74605213e" class=""><strong>样例输入</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8084-82b4-f710c6420b8b" class="">3</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80de-9102-d2098fd11ccf" class=""><strong>样例输出</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8080-af06-e28f55efb5a2" class="">1 2 3</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80e3-8d46-c49d37b404f3" class="">1 3 2</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80d7-8256-f4de67a3033e" class="">2 1 3</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80d6-b308-c90eea3b449a" class="">2 3 1</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8095-a292-dea1fbd7bffc" class="">3 1 2</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80a6-9cb4-c5f698052ff5" class="">3 2 1</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80a9-a785-eb6a1b07f2cd" class="">代码</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-8095-8c21-d713a5a6f0d8" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">#include &lt;bits/stdc++.h&gt;using namespace std;
+bool a[11];
+int b[11];
+int n;
+void out()
+{
+	for(int i=1;i&lt;=n;i++)
+	{
+		cout&lt;&lt;b[i]&lt;&lt;&quot; &quot;;
+	}
+	cout&lt;&lt;endl;
+}
+void dfs(int i)
+{
+	for(int j=1;j&lt;=n;j++)//枚举填的范围
+	{
+		if(a[j]==0)
+		{
+			b[i]=j;
+			a[j]=1;
+			if(i==n)//填完了
+			{
+				out();//输出
+			}
+			else
+			{
+				dfs(i+1);
+			}
+			a[j]=0;//回溯(重点⭐⭐⭐)
+		}
+	}
+}
+int main()
+{
+	cin&gt;&gt;n;
+	dfs(1);//该填的位数
+	return 0;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8010-88e4-ed342a1cc55c" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-8076-a23e-e86daec64791" class="">迷宫类问题</h1></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-808e-8d33-e3c40d23c86c" class=""><strong>题目描述</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80c9-a9b9-f66cc612ee3e" class="">给定一个迷宫和其中的障碍（可有可无），在迷宫内按规定走法四处乱走。如果走不通，则需要返回，进行恢复现场，直到走到终点。最经典的莫过于走迷宫问题（有障碍）：</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8047-8d04-c233fd001774" class="">给定一个N*M方格的迷宫，迷宫里有T处障碍，障碍处不可通过。给定起点坐标和终点坐标，问: 每个方格最多经过1次，有多少种从起点坐标到终点坐标的方案。在迷宫中移动有上下左右四种方式，每次只能移动一个方格。数据保证起点上没有障碍。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80af-a236-d8b95aab95f3" class=""><strong>输入</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8031-a31a-ed5ce1dd09f7" class="">第一行N、M和T，N为行，M为列，T为障碍总数。第二行起点坐标SX,SY，终点坐标FX,FY。接下来T行，每行为障碍点的坐标。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8015-b9e6-c7058812019d" class=""><strong>输出</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-808e-837f-f7798e0e09d0" class="">给定起点坐标和终点坐标，问每个方格最多经过1次，从起点坐标到终点坐标的方案总数。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-801c-99c0-cd761010d343" class=""><strong>样例输入</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80f2-9743-e372af703d5f" class="">2 2 1</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8069-bb83-d4f0b3cfac05" class="">1 1 2 2</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80f0-ab0e-e6ffdc6e7fd3" class="">1 2</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8009-a058-f0eb1c3f4b4c" class=""><strong>样例输出</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80bd-a145-f46afbfe9e67" class="">1</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80c4-99df-eda0af0ab388" class=""><strong>提示</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8009-b3de-c61c3fe2fbc7" class="">【数据规模】</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80fb-b5ad-ee59543eb8da" class="">1≤N,M≤5</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-805a-8cae-f3573b5aca57" class="">代码</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-809e-87f7-de28b6d7b7c7" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">#include &lt;bits/stdc++.h&gt;using namespace std;
+bool a[7][7],l[7][7];
+int x,xx,y,yy,za,zi;//N、M和T，N为行，M为列，T为障碍总数。起点坐标：x,xx  终点坐标y,yy。za,zi是障碍物的坐标。
+int n,m,t,ans;
+void s(int w,int q)
+{
+	if(w&gt;n||q&gt;m||w&lt;1||q&lt;1||a[w][q]==1||l[w][q]==1)//如果出界或起始点不在界内或在障碍物上或走到之前走过的地方
+	{
+		return;//返回上一位
+	}
+	if(w==y&amp;&amp;q==yy)//到了终点
+	{
+		ans++;
+		return;
+	}
+	l[w][q]=1;//将之前走过的地方标记
+	s(w+1,q);//向四周走
+	s(w-1,q);
+	s(w,q+1);
+	s(w,q-1);
+	l[w][q]=0;//回溯(重点⭐⭐⭐)
+	return;
+}
+int main()
+{
+	cin&gt;&gt;n&gt;&gt;m&gt;&gt;t&gt;&gt;x&gt;&gt;xx&gt;&gt;y&gt;&gt;yy;
+	for(int i=1;i&lt;=t;i++)
+	{
+		cin&gt;&gt;za&gt;&gt;zi;
+		a[za][zi]=1;//标记
+	}
+	s(x,xx);
+	cout&lt;&lt;ans;
+	return 0;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-803f-8a34-f15eac310d08" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-8022-9f72-ea8ba1b88f02" class="">特殊迷宫类问题：</h1></div><div style="display:contents" dir="auto"><h2 id="24b9d84a-b678-80aa-8c44-e672b949b0e3" class=""><strong>数塔问题</strong></h2></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80d4-9ca4-cded5649fc17" class=""><strong>题目描述</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8063-91fa-f7e501bf60e0" class="">有形状如图所示的数塔，从顶部出发，在每一结点可以选择向左走或是向右走，一起走到底层，要求找出一条路径，使路径上的值的和最大。</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8088-adba-f1c220d88596" class="">5</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8090-b2c2-d91cdf3162be" class="">7</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8036-9f33-f8796c97fe8b" class="">3 8</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8039-adb4-fa5f47b4ccd5" class="">8 1 0</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80cb-85a7-d464184e0520" class="">2 7 4 4</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-805e-992c-df958f2f3e19" class="">4 5 2 6 5</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-80b2-81a3-fdaee5eafcfe" class=""><strong>输入</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8040-b5be-eb774ff67703" class="">第一行是一个整数N(1 &lt;= N &lt;= 100)，表示数塔的高度，接下来用N行数字表示数塔，其中第i行有个i个整数，且所有的整数均在区间[0,99]内。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8028-80e9-f6ee19949875" class=""><strong>输出</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8058-adb2-c25d88f4c5c2" class="">输出可能得到的最大和</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8082-9885-cba29deb45d0" class=""><strong>样例输入</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-809a-816e-e38c39502f3b" class="">5</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80f3-90ae-eab5f393cd42" class="">7</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80a9-aa86-c067b165a75e" class="">3 8</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8000-8c55-ef03ef15ea8c" class="">8 1 0</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-805f-93b2-d74b4ca19dc8" class="">2 7 4 4</p></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80b8-a0eb-d74dea47f10d" class="">4 5 2 6 5</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8011-aa1f-e14790936b59" class=""><strong>样例输出</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8075-beea-da3f9cd9ac8a" class="">max=30</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-802a-b343-d0e147d21e73" class=""><strong>提示</strong></h3></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-80c1-8f60-f6790974910f" class="">用二维数组存储的时候不需要管空格，如样例那样存储就可以了。</p></div><div style="display:contents" dir="auto"><h3 id="24b9d84a-b678-8053-9ac5-e0bf2f75bf23" class="">代码</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24b9d84a-b678-80ef-b37e-f7717e9e6737" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">#include &lt;bits/stdc++.h&gt;using namespace std;
+int n,maxx,ans;
+int t[110][110];
+void s(int x,int y,int k)
+{
+	k=k+t[x][y];//加上走过的路上的数
+	if(x==n)
+	{
+		if(maxx&lt;k)
+		{
+			maxx=k;
+		}
+		return;
+	}
+	s(x+1,y,k);
+	s(x+1,y+1,k);
+	k=k-t[x][y];//回溯(重点⭐⭐⭐)
+	return;
+}
+int main()
+{
+	cin&gt;&gt;n;
+	for(int i=1;i&lt;=n;i++)
+	{
+		for(int j=1;j&lt;=i;j++)//每行都比上一行多一格
+		{
+			cin&gt;&gt;t[i][j];
+		}
+	}
+	s(1,1,0);
+	cout&lt;&lt;&quot;max=&quot;&lt;&lt;maxx;
+	return 0;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24b9d84a-b678-8094-bf3b-e6d167e29ad0" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h1 id="24b9d84a-b678-8088-8786-ed766cda863c" class="">数塔问题还可以用上广搜与动态规划,我以后再讲！！！</h1></div><div style="display:contents" dir="auto"><p id="24b9d84a-b678-8056-a8b3-e64e31cc4613" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
