@@ -1,0 +1,821 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>P7911 [CSP-J 2021] 网络连接</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="24c9d84a-b678-806d-b831-e7d368c20a5c" class="page sans"><header><h1 class="page-title" dir="auto">P7911 [CSP-J 2021] 网络连接</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>创建者</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocI05DXY3twXoSrPO2Eh2zr8xlEm_8PfhbXI0Vd2LTEuYHyj4A=s100" class="icon user-icon"/>lu cas</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>类别</th><td><span class="selected-value select-value-color-gray">c++</span><span class="selected-value select-value-color-default">csp/noi</span><span class="selected-value select-value-color-blue">题解</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>创建时间</th><td><time>@2025年8月11日 17:25</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8030-bda2-e3a64c700377" class="">写在前面</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-808c-b395-d986d3d28f29" class="">本文章需要具备以下基础知识</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8068-97f4-d4e0bdb43a22" class="">1.sscanf()</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80fd-84af-d2aeeda7fa2c" class="">2.sprintf()</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80d4-b689-e9f511c669de" class="">教程:<a href="https://blog.csdn.net/qq_40772692/article/details/78906408?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522172215700316800182124051%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&amp;request_id=172215700316800182124051&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~baidu_landing_v2~default-4-78906408-null-null.142%5Ev100%5Epc_search_result_base8&amp;utm_term=sprintf%28%29c%2B%2B&amp;spm=1018.2226.3001.4187">【C/C++】 sscanf函数、sprintf函数、%[]格式符详解-CSDN博客</a></p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8021-8371-d7e1c40cbab7" class="">3.map</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8056-85fb-cbf833a84553" class="">教程:</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8045-a7f5-d67efd06b644" class=""><a href="https://blog.csdn.net/gaoqiandr/article/details/127233513?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522172215723616800185857182%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&amp;request_id=172215723616800185857182&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-2-127233513-null-null.142%5Ev100%5Epc_search_result_base8&amp;utm_term=mapc%2B%2B&amp;spm=1018.2226.3001.4187">https://blog.csdn.net/gaoqiandr/article/details/127233513?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522172215723616800185857182%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&amp;request_id=172215723616800185857182&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-2-127233513-null-null.142^v100^pc_search_result_base8&amp;utm_term=mapc%2B%2B&amp;spm=1018.2226.3001.4187https://blog.csdn.net/gaoqiandr/article/details/127233513?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522172215723616800185857182%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&amp;request_id=172215723616800185857182&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-2-127233513-null-null.142%5Ev100%5Epc_search_result_base8&amp;utm_term=mapc%2B%2B&amp;spm=1018.2226.3001.4187</a></p></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-8024-b7fc-e086f780aed6" class="image"><a href="https://csdnimg.cn/release/blog_editor_html/release2.4.1/ckeditor/plugins/CsdnLink/icons/icon-default.png?t=P758"><img src="https://csdnimg.cn/release/blog_editor_html/release2.4.1/ckeditor/plugins/CsdnLink/icons/icon-default.png?t=P758"/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8094-98aa-d94a2dfc1296" class="">题目描述</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-805b-b334-ef3099340259" class="">TCP/IP 协议是网络通信领域的一项重要协议。今天你的任务，就是尝试利用这个协议，还原一个简化后的网络连接场景。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8055-a821-ce2e472bdf1b" class="">在本问题中，计算机分为两大类：服务机（<code>Server</code>）和客户机（<code>Client</code>）。服务机负责建立连接，客户机负责加入连接。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8004-9dec-d05ee6062f53" class="">需要进行网络连接的计算机共有 n台，编号为 1∼n，这些机器将按编号递增的顺序，依次发起一条建立连接或加入连接的操作。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80c7-abc1-e2e3cbf70d3e" class="">每台机器在尝试建立或加入连接时需要提供一个地址串。服务机提供的地址串表示它尝试建立连接的地址，客户机提供的地址串表示它尝试加入连接的地址。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8064-8a9d-c26de41095ff" class="">一个符合规范的地址串应当具有以下特征：</p></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80fc-998b-dc0221bc75c9" class="numbered-list" start="1"><li>必须形如 <code>a.b.c.d:e</code> 的格式，其中 a, b, c, d, ea,b,c,d,e 均为非负整数；</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80ff-b81b-d12d435d32c9" class="numbered-list" start="2"><li>0≤a, b, c, d ≤255，0≤e≤65535；</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8048-831f-dbe430fe880f" class="numbered-list" start="3"><li>a, b, c, d, e均不能含有多余的前导 0。</li></ol></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80d8-ba0a-fa0698f3bbfe" class="">相应地，不符合规范的地址串可能具有以下特征：</p></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-809f-9723-d65c9e4dfaa3" class="numbered-list" start="1"><li>不是形如 <code>a.b.c.d:e</code> 格式的字符串，例如含有多于 3个字符 <code>.</code> 或多于 1 个字符 <code>:</code> 等情况；</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80aa-adef-f71e53532ba2" class="numbered-list" start="2"><li>整数 a, b, c, d, e 中某一个或多个超出上述范围；</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80c6-aed6-c1d32e6833fc" class="numbered-list" start="3"><li>整数 a, b, c, d, e中某一个或多个含有多余的前导 0。</li></ol></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-800d-9679-f2aa05c933f3" class="">例如，地址串 <code>192.168.0.255:80</code> 是符合规范的，但 <code>192.168.0.999:80</code>、<code>192.168.00.1:10</code>、<code>192.168.0.1:088</code>、<code>192:168:0:1.233</code> 均是不符合规范的。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8084-91e2-d51933c37867" class="">如果服务机或客户机在发起操作时提供的地址串不符合规范，这条操作将被直接忽略。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-806e-9f52-fac74f3ab4cf" class="">在本问题中，我们假定凡是符合上述规范的地址串均可参与正常的连接，你无需考虑每个地址串的实际意义。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80c8-98f6-d457a5a341ac" class="">由于网络阻塞等原因，不允许两台服务机使用相同的地址串，如果此类现象发生，后一台尝试建立连接的服务机将会无法成功建立连接；除此之外，凡是提供符合规范的地址串的服务机均可成功建立连接。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8077-8255-f5b186e360b9" class="">如果某台提供符合规范的地址的客户机在尝试加入连接时，与先前某台已经成功建立连接的服务机提供的地址串相同，这台客户机就可以成功加入连接，并称其连接到这台服务机；如果找不到这样的服务机，则认为这台客户机无法成功加入连接。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8044-ab10-fa1157550174" class="">请注意，尽管不允许两台不同的服务机使用相同的地址串，但多台客户机使用同样的地址串，以及同一台服务机同时被多台客户机连接的情况是被允许的。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8062-b1c4-e729861246cf" class="">你的任务很简单：在给出每台计算机的类型以及地址串之后，判断这台计算机的连接情况。</p></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80e7-9615-defbe62427ab" class="">输入</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8046-84a0-f51bc28b6894" class="">第一行，一个正整数 n。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80d6-af37-fb71b3c94d1b" class="">接下来 nn 行，每行两个字符串 op,ad，按照编号从小到大给出每台计算机的类型及地址串。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80c1-a6a1-e7402c641a18" class="">其中 op 保证为字符串 <code>Server</code> 或 <code>Client</code> 之一,ad 为一个长度不超过 25 的，仅由数字、字符 <code>.</code> 和字符 <code>:</code> 组成的非空字符串。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8007-9742-fbf400493e51" class="">每行的两个字符串之间用恰好一个空格分隔开，每行的末尾没有多余的空格。</p></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80b7-ac39-d307a4fc13a4" class="">输出</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-804f-ba6a-f3415ddb2434" class="">输出共 n 行，每行一个正整数或字符串表示第 ii 台计算机的连接状态。其中：</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8005-bbe5-ce375630a7d4" class="">如果第 i 台计算机为服务机，则：</p></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8021-b72d-da2f936184cf" class="numbered-list" start="1"><li>如果其提供符合规范的地址串且成功建立连接，输出字符串 <code>OK</code>。</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80c1-9628-e48ebb07cbe9" class="numbered-list" start="2"><li>如果其提供符合规范的地址串，但由于先前有相同地址串的服务机而无法成功建立连接，输出字符串 <code>FAIL</code>。</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-807a-b0e3-cbed10ada9c1" class="numbered-list" start="3"><li>如果其提供的地址串不是符合规范的地址串，输出字符串 <code>ERR</code>。</li></ol></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8078-9bbc-dba28c8d8cb1" class="">如果第 i 台计算机为客户机，则：</p></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80ad-8ac7-c98e979d8a3d" class="numbered-list" start="1"><li>如果其提供符合规范的地址串且成功加入连接，输出一个正整数表示这台客户机连接到的服务机的编号。</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8059-85e1-d7c4649e4b03" class="numbered-list" start="2"><li>如果其提供符合规范的地址串，但无法成功加入连接时，输出字符串 <code>FAIL</code>。</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8093-aca4-f0f8a350daea" class="numbered-list" start="3"><li>如果其提供的地址串不是符合规范的地址串，输出字符串 <code>ERR</code>。</li></ol></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80c6-a2ef-decaed124bfa" class="">样例输入</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-8084-94d5-c3f93e06b164" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">输入 #1
+5
+Server 192.168.1.1:8080
+Server 192.168.1.1:8080
+Client 192.168.1.1:8080
+Client 192.168.1.1:80
+Client 192.168.1.1:99999
+
+输出 #1
+OK
+FAIL
+1
+FAIL
+ERR
+
+输入 #2
+10
+Server 192.168.1.1:80
+Client 192.168.1.1:80
+Client 192.168.1.1:8080
+Server 192.168.1.1:80
+Server 192.168.1.1:8080
+Server 192.168.1.999:0
+Client 192.168.1.1.8080
+Client 192.168.1.1:8080
+Client 192.168.1.1:80
+Client 192.168.1.999:0
+
+输出 #2
+OK
+1
+FAIL
+FAIL
+OK
+ERR
+ERR
+5
+1
+ERR</code></pre></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80a7-be11-ef9ef7d965d2" class="">提示</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80db-b5fa-e00add8c7613" class="">【样例解释 #1】</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-800d-9641-c898b80cff97" class="">计算机 1 为服务机，提供符合规范的地址串 <code>192.168.1.1:8080</code>，成功建立连接；</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-804b-af43-e8f7ca2b465c" class="">计算机 2 为服务机，提供与计算机 1 相同的地址串，未能成功建立连接；</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8083-8a21-db877ff678a9" class="">计算机 3 为客户机，提供符合规范的地址串 <code>192.168.1.1:8080</code>，成功加入连接，并连接到服务机 1；</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80d4-9725-cfe36277c076" class="">计算机 4 为客户机，提供符合规范的地址串 <code>192.168.1.1:80</code>，找不到服务机与其连接；</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8098-a17f-dbd5ae70c37c" class="">计算机 5 为客户机，提供的地址串 <code>192.168.1.1:99999</code> 不符合规范。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8063-ac0c-c2b05fa6cf81" class="">【数据范围】</p></div><div style="display:contents" dir="ltr"><table id="24c9d84a-b678-80b4-b915-d97041289e31" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8028-9ee4-dfc798ea57f9"><th id="[^^Q" class="simple-table-header-color simple-table-header">测试点编号</th><th id=":Qif" class="simple-table-header-color simple-table-header">n ≤</th><th id="WG=~" class="simple-table-header-color simple-table-header">特殊性质</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80d7-9e38-e249365d5d78"><td id="[^^Q" class="">1</td><td id=":Qif" class="">10</td><td id="WG=~" class="">性质 1 2 3</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80b6-9bda-f549a842a5b2"><td id="[^^Q" class="">2~3</td><td id=":Qif" class="">100</td><td id="WG=~" class="">性质 1 2 3</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-802b-a193-ca21cd73918d"><td id="[^^Q" class="">4~5</td><td id=":Qif" class="">1000</td><td id="WG=~" class="">性质 1 2 3</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-803f-83b2-f24c572ca4ab"><td id="[^^Q" class="">6~8</td><td id=":Qif" class="">1000</td><td id="WG=~" class="">性质 1 2</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8050-add0-d01c67272eac"><td id="[^^Q" class="">9~11</td><td id=":Qif" class="">1000</td><td id="WG=~" class="">性质 1</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8015-9d06-da1475a0e521"><td id="[^^Q" class="">12~13</td><td id=":Qif" class="">1000</td><td id="WG=~" class="">性质 2</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80d6-8d2c-d34b186fa6ec"><td id="[^^Q" class="">14~15</td><td id=":Qif" class="">1000</td><td id="WG=~" class="">性质 4</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8065-afd5-ee5b7f54d95d"><td id="[^^Q" class="">16∼17</td><td id=":Qif" class="">1000</td><td id="WG=~" class="">性质 5</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80b3-a249-c90be397b0a1"><td id="[^^Q" class="">18∼20</td><td id=":Qif" class="">1000</td><td id="WG=~" class="">无特殊性质</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80cb-b8ef-fe6957db9794" class="">“性质 1”为：保证所有的地址串均符合规范；</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-801d-9d54-f5bf45404f88" class="">“性质 2”为：保证对于任意两台不同的计算机，如果它们同为服务机或者同为客户机，则它们提供的地址串一定不同；</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8048-9eea-f07c79382c17" class="">“性质 3”为：保证任意一台服务机的编号都小于所有的客户机；</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-801d-8c33-c205423ce77e" class="">“性质 4”为：保证所有的地址串均形如 <code>a.b.c.d:e</code> 的格式，其中 a, b, c, d, e 均为不超过 10^9 且不含有多余前导 0 的非负整数；</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8060-a5b9-d23faca4890c" class="">“性质 5”为：保证所有的地址串均形如 <code>a.b.c.d:e</code> 的格式，其中 a, b, c, d, e 均为只含有数字的非空字符串。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8087-a7f6-d8f8ac720b1a" class="">对于 100% 的数据，保证1≤n≤1000。</p></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80ef-a9b2-dc48fbb64961" class="">思路</h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-809d-b02a-cd606cdb33e1" class="">用map来查看地址是否重复,sscanf用来拆分,sprintf用来合并,判断就很简单了</p></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80b5-ba76-e336967a3296" class="">代码</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-80bf-aaf2-d3cb1935d9c1" class="code code-wrap"><code class="language-C++" style="white-space:pre-wrap;word-break:break-all">#include &lt;bits/stdc++.h&gt;using namespace std;
+string op,ad;
+int n;
+map&lt;string,int&gt;mp;
+bool check(string s)
+{
+	int len=s.size();
+	bool ok=0;
+	long long a=-1,b=-1,c=-1,d=-1,e=-1;
+	if(sscanf(s.c_str(),&quot;%lld.%lld.%lld.%lld:%lld&quot;,&amp;a,&amp;b,&amp;c,&amp;d,&amp;e)!=5)
+	{
+		return 0;
+	}
+	if (a&lt;0||a&gt;255||b&lt;0||b&gt;255||c&lt;0||c&gt;255||d&lt;0||d&gt;255||e&lt;0||e&gt;65535)
+	{
+		return 0;
+	}
+	char s2[35];
+	sprintf(s2,&quot;%lld.%lld.%lld.%lld:%lld&quot;,a,b,c,d,e);
+	for(int i=0;i&lt;len;i++)
+	{
+		if(s[i]==s2[i])
+		{
+			ok=1;
+		}
+		else
+		{
+			ok=0;
+			break;
+		}
+	}
+	return ok;
+}
+int main()
+{
+	cin&gt;&gt;n;
+	for(int i=1;i&lt;=n;i++)
+	{
+		cin&gt;&gt;op&gt;&gt;ad;
+		if(check(ad)==0)
+		{
+			cout&lt;&lt;&quot;ERR&quot;&lt;&lt;endl;
+			continue;
+		}
+		else if(op[0]==&#x27;S&#x27;)
+		{
+			if(mp[ad]!=0)
+			{
+				cout&lt;&lt;&quot;FAIL&quot;&lt;&lt;endl;
+			}
+			else
+			{
+				mp[ad]=i;
+				cout&lt;&lt;&quot;OK&quot;&lt;&lt;endl;
+			}
+		}
+		else if(op[0]==&#x27;C&#x27;)
+		{
+			if(mp.count(ad)==1)
+			{
+				cout&lt;&lt;mp[ad]&lt;&lt;endl;
+			}
+			else
+			{
+				cout&lt;&lt;&quot;FAIL&quot;&lt;&lt;endl;
+			}
+		}
+	}
+	return 0;
+}</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-80a9-a00e-f6db411af45d" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80cd-84fd-f8cf3e1d4450" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

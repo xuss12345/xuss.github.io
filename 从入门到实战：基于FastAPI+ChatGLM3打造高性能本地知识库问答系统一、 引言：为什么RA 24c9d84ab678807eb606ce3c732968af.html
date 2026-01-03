@@ -1,0 +1,1099 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>从入门到实战：基于FastAPI+ChatGLM3打造高性能本地知识库问答系统一、 引言：为什么RAG是构建可信AI应用的关键？</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="24c9d84a-b678-807e-b606-ce3c732968af" class="page sans"><header><h1 class="page-title" dir="auto">从入门到实战：基于FastAPI+ChatGLM3打造高性能本地知识库问答系统<strong>一、 引言：为什么RAG是构建可信AI应用的关键？</strong></h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>创建者</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocI05DXY3twXoSrPO2Eh2zr8xlEm_8PfhbXI0Vd2LTEuYHyj4A=s100" class="icon user-icon"/>lu cas</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>类别</th><td><span class="selected-value select-value-color-brown">ai</span><span class="selected-value select-value-color-yellow">python</span><span class="selected-value select-value-color-pink">其他</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>创建时间</th><td><time>@2025年8月11日 17:55</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><hr id="2a69d84a-b678-807a-b46e-c9e27e308c8b"/></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-804c-8725-debbed828cb7" class="">大语言模型（LLM）如ChatGPT在通用任务上表现惊人，但其在企业级或个人知识管理应用中面临两大核心挑战：</p></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8085-bb17-f6a09bc79e5c" class="bulleted-list"><li style="list-style-type:disc"><strong>知识实时性差</strong>：模型训练数据存在滞后性，无法获取最新、最私有的信息。</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8033-af64-f79087f0eb69" class="bulleted-list"><li style="list-style-type:disc"><strong>事实准确性难保</strong>：容易产生“幻觉”，对于不熟悉的内容会编造看似合理但错误的答案。</li></ul></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80a4-8875-e8d9fbce677f" class=""><strong>RAG（检索增强生成）</strong> 架构应运而生，它巧妙地将信息检索技术与大语言模型相结合，为核心问题提供了优雅的解决方案。其核心流程如同一位严谨的学者：</p></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-808f-badf-c275179baa59" class="bulleted-list"><li style="list-style-type:disc"><strong>检索（Retrieval）</strong>：根据用户问题，从海量知识库中精准“检索”出最相关的信息片段。</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8013-87a2-c5a011548f92" class="bulleted-list"><li style="list-style-type:disc"><strong>增强（Augmentation）</strong>：将这些信息作为“证据”或“上下文”，与原始问题一起组装成新的、信息更丰富的提示。</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80c2-bef0-f4723102b6b1" class="bulleted-list"><li style="list-style-type:disc"><strong>生成（Generation）</strong>：LLM基于这个“有据可依”的提示生成答案，显著提升准确性和可信度。</li></ul></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-809b-a735-f54f59f41cff" class="">本文将不仅实现一个基础RAG系统，更会深入探讨其生产环境下的优化方案。</p></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-80a5-b27a-e786f4016bc7" class=""><strong>二、 技术栈深度解析：选型背后的思考</strong></h3></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80c9-9ef5-c12be11ae585" class="">一个稳定可靠的RAG系统，技术选型至关重要。我们的选择基于以下考量：</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-801a-89b9-f2d9b6be40b8" class=""><strong>大模型（LLM）：ChatGLM3-6B</strong></p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80a3-b439-f955799edd85" class=""><strong>优势</strong>：优秀的双语能力、完全开源、支持INT4量化可在消费级显卡部署。其新增的<code>Code Interpreter</code>功能为未来扩展留下想象空间。</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80fe-8277-d82edfae3329" class=""><strong>部署</strong>：使用<code>transformers</code>库进行本地加载，确保数据隐私和离线可用性。</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-801f-8cf1-f98692225433" class=""><strong>向量数据库：ChromaDB</strong></p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-807b-8eb9-db3537f11d52" class=""><strong>优势</strong>：轻量级、内存优先、API简洁，无需外部服务，简化了项目复杂度，非常适合原型验证和中小规模应用。</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80ad-b67e-e8acd53a9ed5" class=""><strong>备选</strong>：生产环境中，可平滑迁移至<code>Milvus</code>或<code>Qdrant</code>以支持十亿级向量。</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80ec-b52d-f3ecd5822335" class=""><strong>嵌入模型（Embedding Model）：BAAI/bge-large-zh-v1.5</strong></p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80f1-9196-e4284625e51e" class=""><strong>优势</strong>：在中文语义相似度基准（如MTEB）上表现卓越，能深度理解中文语境下的语义关联，是检索准确性的基石。</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80ac-bed5-e8e2e29ff545" class=""><strong>Web框架：FastAPI</strong></p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-809b-a2cb-d402a0bfe186" class=""><strong>优势</strong>：利用现代Python特性（如类型提示），自动生成交互式API文档，异步支持能力完美契合I/O密集型的AI应用。</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80fe-a04a-c0ed08b6065e" class=""><strong>前端界面：Gradio</strong></p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-807a-8c86-de41eeaab4bb" class=""><strong>优势</strong>：只需几行代码即可构建美观的Web UI，极大降低测试和演示的门槛。</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8010-b74b-d6597911d669" class=""><strong>系统架构图如下（可用Mermaid语法描述）：</strong></p></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-8090-b14c-f520d9fbdc9e" class="image"><a href="https://i-blog.csdnimg.cn/direct/e3b5116917eb4b78a349d83eda9b9538.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/direct/e3b5116917eb4b78a349d83eda9b9538.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-80ee-bd71-c7a49168a4db" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8083-827d-ecac81f8787c" class="">编辑</p></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-8087-80ae-e38fd309c339" class=""><strong>三、 项目实战：从零到一的完整实现</strong></h3></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-8063-b173-d1064ecd788a" class=""><strong>3.1 环境配置与依赖管理</strong></h3></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80a3-9385-f2dc2a21abd3" class="">首先，创建并激活Python虚拟环境，然后使用<code>requirements.txt</code>管理依赖。</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8054-8a46-f7e1fca76bb8" class=""><code><strong>requirements.txt</strong></code></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-807f-952a-e0ae9beb518c" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">fastapi==0.104.1
+uvicorn==0.24.0
+chromadb==0.4.15
+sentence-transformers==2.2.2
+transformers==4.35.2
+torch==2.1.0
+gradio==4.8.0
+pypdf2==3.0.1  # 用于PDF文档解析
+sentencepiece==0.1.99  # ChatGLM3分词依赖
+accelerate==0.24.1  # 用于模型加载优化</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-80dd-8c24-e5551f4fb929" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8032-85a7-c75239a77e2a" class="">安装命令：<code>pip install -r requirements.txt</code></p></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-80ef-91fd-ceb3fc099bbf" class=""><strong>3.2 核心模块一：智能化知识库构建（</strong><code><strong>knowledge_base.py</strong></code><strong>）</strong></h3></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80b9-9c02-f1b2c77a8780" class="">文本分块是RAG效果的第一个关键点。我们采用递归分割法，优先按段落、标题等自然边界进行分割。</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-807d-9e4b-fef0f658849f" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">import os
+import re
+from chromadb import Documents, EmbeddingFunction, Client
+from sentence_transformers import SentenceTransformer
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# 更健壮的Embedding函数
+class BGEEmbeddingFunction(EmbeddingFunction):
+    def __init__(self, model_name=&#x27;BAAI/bge-large-zh-v1.5&#x27;, device=&#x27;cpu&#x27;):
+        self.model = SentenceTransformer(model_name, device=device)
+        # 指令模型，为检索任务优化
+        self.query_instruction = &quot;为这个句子生成表示用于检索相关文章：&quot;
+
+    def __call__(self, input: Documents):
+        # 对存储的文档，正常编码
+        return self.model.encode(input, normalize_embeddings=True).tolist()
+
+    def encode_queries(self, queries: Documents):
+        # 对查询，可以添加指令
+        instructed_queries = [self.query_instruction + q for q in queries]
+        return self.model.encode(instructed_queries, normalize_embeddings=True).tolist()
+
+def smart_text_splitter(text):
+    &quot;&quot;&quot;使用递归字符分割，优先保持段落完整性&quot;&quot;&quot;
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,  # 目标块大小
+        chunk_overlap=80,  # 块间重叠大小，保持上下文
+        length_function=len,
+        separators=[&quot;\n\n&quot;, &quot;\n&quot;, &quot;。&quot;, &quot;！&quot;, &quot;？&quot;, &quot;；&quot;, &quot;，&quot;, &quot;、&quot;, &quot;&quot;]  # 分割优先级
+    )
+    return text_splitter.split_text(text)
+
+def build_knowledge_base(docs_dir=&quot;./docs&quot;, persist_directory=&quot;./chroma_db&quot;):
+    &quot;&quot;&quot;构建知识库并持久化到磁盘&quot;&quot;&quot;
+
+    # 初始化ChromaDB客户端，指定持久化目录
+    client = Client(persist_directory=persist_directory)
+
+    # 创建或获取集合。注意：生产环境应使用本地部署的embedding模型。
+    collection = client.get_or_create_collection(
+        name=&quot;knowledge_base&quot;,
+        embedding_function=BGEEmbeddingFunction()
+    )
+
+    # 支持多种文档格式
+    supported_extensions = (&#x27;.txt&#x27;, &#x27;.pdf&#x27;, &#x27;.md&#x27;)
+
+    for filename in os.listdir(docs_dir):
+        if filename.endswith(supported_extensions):
+            filepath = os.path.join(docs_dir, filename)
+            print(f&quot;正在处理文档: {filename}&quot;)
+
+            try:
+                # 文本文件处理
+                if filename.endswith(&#x27;.txt&#x27;):
+                    with open(filepath, &#x27;r&#x27;, encoding=&#x27;utf-8&#x27;) as f:
+                        text = f.read()
+                # 此处可扩展PDF、Markdown解析器
+                # elif filename.endswith(&#x27;.pdf&#x27;):
+                #     text = extract_text_from_pdf(filepath)
+                else:
+                    continue
+
+                # 智能文本分割
+                chunks = smart_text_splitter(text)
+
+                if not chunks:
+                    continue
+
+                # 生成唯一ID
+                doc_ids = [f&quot;{filename}_chunk_{i}&quot; for i in range(len(chunks))]
+                # 元数据，记录来源
+                metadatas = [{&quot;source&quot;: filename, &quot;chunk_index&quot;: i} for i in range(len(chunks))]
+
+                # 批量添加到向量数据库
+                collection.add(
+                    documents=chunks,
+                    ids=doc_ids,
+                    metadatas=metadatas
+                )
+                print(f&quot;成功加载 {filename}，分割为 {len(chunks)} 个块。&quot;)
+
+            except Exception as e:
+                print(f&quot;处理文档 {filename} 时出错: {e}&quot;)
+                continue
+
+    # 持久化数据到磁盘
+    client.persist()
+    print(&quot;知识库构建与持久化完成！&quot;)
+    return collection
+
+if __name__ == &quot;__main__&quot;:
+    kb_collection = build_knowledge_base()</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-80af-963d-f98e23cb5ff0" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-80ac-99ce-f98fcb53b889" class=""><strong>3.3 核心模块二：FastAPI服务与增强的RAG链（</strong><code><strong>main.py</strong></code><strong>）</strong></h3></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80ce-823b-f0cb5ff734cf" class="">我们实现一个更健壮、功能更丰富的API服务。</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-8008-9e00-c7c3ec8cf8e9" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">from fastapi import FastAPI, HTTPException, BackgroundTasks
+from pydantic import BaseModel
+from typing import List, Optional
+import uvicorn
+import torch
+from transformers import AutoTokenizer, AutoModel
+from knowledge_base import build_knowledge_base, BGEEmbeddingFunction
+from chromadb import Client
+import logging
+
+# 配置日志
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(
+    title=&quot;智能知识库问答系统 API&quot;,
+    description=&quot;基于RAG架构的本地知识问答系统&quot;,
+    version=&quot;2.0&quot;
+)
+
+# 全局变量
+knowledge_collection = None
+tokenizer = None
+model = None
+device = torch.device(&quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;)
+
+# 初始化ChatGLM3模型（简化版，实际需按官方文档加载）
+def load_chatglm_model():
+    &quot;&quot;&quot;加载ChatGLM3模型和分词器&quot;&quot;&quot;
+    global tokenizer, model
+    try:
+        model_path = &quot;THUDM/chatglm3-6b&quot;
+        logger.info(f&quot;正在从 {model_path} 加载模型...&quot;)
+
+        tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+        model = AutoModel.from_pretrained(
+            model_path,
+            trust_remote_code=True,
+            torch_dtype=torch.float16,  # 半精度加载，节省显存
+            device_map=&quot;auto&quot;  # 自动分配至多GPU
+        ).eval()
+        logger.info(&quot;ChatGLM3模型加载成功！&quot;)
+    except Exception as e:
+        logger.error(f&quot;模型加载失败: {e}&quot;)
+        raise e
+
+class QuestionRequest(BaseModel):
+    question: str
+    top_k: Optional[int] = 5
+    temperature: Optional[float] = 0.1  # 控制生成多样性
+
+class QuestionResponse(BaseModel):
+    answer: str
+    relevant_sources: List[str]
+    retrieved_contexts: List[str]  # 返回检索到的上下文，增强可解释性
+
+class HealthCheckResponse(BaseModel):
+    status: str
+    model_loaded: bool
+    knowledge_base_ready: bool
+
+def construct_prompt(question, contexts):
+    &quot;&quot;&quot;构建高质量的提示词模板&quot;&quot;&quot;
+    context_str = &quot;\n\n&quot;.join([f&quot;[出处: {ctx[&#x27;source&#x27;]}]\n{ctx[&#x27;text&#x27;]}&quot; for ctx in contexts])
+
+    prompt = f&quot;&quot;&quot;你是一个专业的AI助手，需要严格根据提供的背景信息来回答问题。
+请遵循以下规则：
+1. 答案必须基于提供的背景信息生成。
+2. 如果背景信息不足以回答问题，请明确告知用户并说明原因。
+3. 保持答案的准确性和专业性，避免编造信息。
+4. 如果问题与背景信息无关，请礼貌地表示你无法回答。
+
+【背景信息】
+{context_str}
+
+【用户问题】
+{question}
+
+【答案】
+&quot;&quot;&quot;
+    return prompt
+
+def rag_qa(question: str, top_k: int = 5) -&gt; tuple:
+    &quot;&quot;&quot;增强版的RAG问答流程&quot;&quot;&quot;
+    if not knowledge_collection:
+        raise HTTPException(status_code=503, detail=&quot;知识库未就绪&quot;)
+
+    # 1. 检索：从知识库中查找相关片段
+    try:
+        results = knowledge_collection.query(
+            query_texts=[question],
+            n_results=top_k,
+            include=[&#x27;documents&#x27;, &#x27;metadatas&#x27;]  # 返回文档和元数据
+        )
+
+        retrieved_docs = results[&#x27;documents&#x27;][0]
+        metadatas = results[&#x27;metadatas&#x27;][0]
+
+        # 组织上下文信息
+        contexts = [{&quot;text&quot;: doc, &quot;source&quot;: meta[&#x27;source&#x27;]} for doc, meta in zip(retrieved_docs, metadatas)]
+
+    except Exception as e:
+        logger.error(f&quot;检索过程出错: {e}&quot;)
+        raise HTTPException(status_code=500, detail=f&quot;检索失败: {str(e)}&quot;)
+
+    # 2. 增强：构建提示词
+    prompt = construct_prompt(question, contexts)
+
+    # 3. 生成：调用ChatGLM3生成答案
+    try:
+        if model is None:
+            # 降级方案：使用模拟响应或简单拼接
+            answer = &quot;[模拟模式] 已成功检索到相关信息，但模型未加载。检索到的关键内容如下：\n&quot; + &quot;\n&quot;.join(retrieved_docs[:2])
+        else:
+            # 使用ChatGLM3生成
+            inputs = tokenizer(prompt, return_tensors=&quot;pt&quot;).to(device)
+            with torch.no_grad():
+                outputs = model.generate(**inputs, max_length=2048, temperature=0.1)
+            answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+            # 提取模型生成部分，去除提示词
+            answer = answer.split(&quot;【答案】&quot;)[-1].strip()
+
+    except Exception as e:
+        logger.error(f&quot;生成过程出错: {e}&quot;)
+        raise HTTPException(status_code=500, detail=f&quot;答案生成失败: {str(e)}&quot;)
+
+    # 提取唯一来源
+    sources = list(set([ctx[&#x27;source&#x27;] for ctx in contexts]))
+    context_texts = [ctx[&#x27;text&#x27;] for ctx in contexts]
+
+    return answer, sources, context_texts
+
+@app.on_event(&quot;startup&quot;)
+async def startup_event():
+    &quot;&quot;&quot;服务启动时初始化模型和知识库&quot;&quot;&quot;
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(initialize_services)
+    return background_tasks
+
+async def initialize_services():
+    &quot;&quot;&quot;异步初始化服务&quot;&quot;&quot;
+    global knowledge_collection
+    try:
+        # 先加载知识库
+        knowledge_collection = build_knowledge_base()
+        # 然后加载模型（耗时长）
+        load_chatglm_model()
+    except Exception as e:
+        logger.error(f&quot;服务初始化失败: {e}&quot;)
+
+@app.get(&quot;/health&quot;, response_model=HealthCheckResponse)
+async def health_check():
+    &quot;&quot;&quot;健康检查端点&quot;&quot;&quot;
+    return HealthCheckResponse(
+        status=&quot;healthy&quot;,
+        model_loaded=model is not None,
+        knowledge_base_ready=knowledge_collection is not None
+    )
+
+@app.post(&quot;/ask&quot;, response_model=QuestionResponse)
+async def ask_question(request: QuestionRequest):
+    &quot;&quot;&quot;核心问答接口&quot;&quot;&quot;
+    try:
+        answer, sources, contexts = rag_qa(request.question, request.top_k)
+        return QuestionResponse(
+            answer=answer,
+            relevant_sources=sources,
+            retrieved_contexts=contexts
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f&quot;问答接口异常: {e}&quot;)
+        raise HTTPException(status_code=500, detail=&quot;内部服务器错误&quot;)
+
+@app.get(&quot;/&quot;)
+async def root():
+    return {&quot;message&quot;: &quot;智能知识库问答系统已启动，请访问 /docs 查看API文档&quot;}
+
+if __name__ == &quot;__main__&quot;:
+    uvicorn.run(app, host=&quot;0.0.0.0&quot;, port=8000, reload=True)</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-8033-b7a2-ecba04fffe31" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-80e6-91f9-e2b37840ea8b" class=""><strong>3.4 核心模块三：集成Gradio打造友好Web界面（</strong><code><strong>gradio_ui.py</strong></code><strong>）</strong></h3></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8055-85f1-f301e0566679" class="">提供一个无需编程即可测试的界面。</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-8039-a8ab-e88ed229477f" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">import gradio as gr
+import requests
+import json
+
+# FastAPI服务地址
+API_URL = &quot;http://127.0.0.1:8000&quot;
+
+def predict(question, top_k):
+    &quot;&quot;&quot;调用后端API&quot;&quot;&quot;
+    try:
+        response = requests.post(
+            f&quot;{API_URL}/ask&quot;,
+            json={&quot;question&quot;: question, &quot;top_k&quot;: int(top_k)}
+        )
+        if response.status_code == 200:
+            result = response.json()
+            # 格式化显示结果
+            answer = result[&quot;answer&quot;]
+            sources = &quot;\n&quot;.join([f&quot;- {source}&quot; for source in result[&quot;relevant_sources&quot;]])
+            contexts = &quot;\n\n&quot;.join([f&quot;[上下文 {i+1}]: {ctx}&quot; for i, ctx in enumerate(result[&quot;retrieved_contexts&quot;])])
+
+            full_output = f&quot;&quot;&quot;## 答案
+{answer}
+
+## 参考来源
+{sources}
+
+## 检索到的上下文
+{contexts}&quot;&quot;&quot;
+            return full_output
+        else:
+            return f&quot;错误: {response.text}&quot;
+    except Exception as e:
+        return f&quot;请求失败: {str(e)}&quot;
+
+# 创建Gradio界面
+with gr.Blocks(title=&quot;智能知识库问答系统&quot;, theme=gr.themes.Soft()) as demo:
+    gr.Markdown(&quot;&quot;&quot;
+    # 🧠 智能知识库问答系统
+    基于RAG技术，为您提供准确可靠的问答服务。
+    &quot;&quot;&quot;)
+
+    with gr.Row():
+        with gr.Column(scale=1):
+            question = gr.Textbox(
+                label=&quot;请输入您的问题&quot;,
+                placeholder=&quot;例如：RAG技术的核心优势是什么？&quot;,
+                lines=3
+            )
+            top_k = gr.Slider(
+                minimum=1,
+                maximum=10,
+                value=3,
+                step=1,
+                label=&quot;检索上下文数量 (top_k)&quot;
+            )
+            submit_btn = gr.Button(&quot;提交问题&quot;, variant=&quot;primary&quot;)
+
+        with gr.Column(scale=2):
+            output = gr.Markdown(label=&quot;问答结果&quot;)
+
+    # 绑定事件
+    submit_btn.click(fn=predict, inputs=[question, top_k], outputs=output)
+    question.submit(fn=predict, inputs=[question, top_k], outputs=output)
+
+    # 示例问题
+    gr.Examples(
+        examples=[
+            [&quot;什么是RAG？它的主要优势有哪些？&quot;, 3],
+            [&quot;本文中提到了哪些技术栈？&quot;, 5],
+            [&quot;如何优化检索效果？&quot;, 4]
+        ],
+        inputs=[question, top_k]
+    )
+
+if __name__ == &quot;__main__&quot;:
+    demo.launch(server_name=&quot;0.0.0.0&quot;, server_port=7860, share=False)</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-80bf-849f-f90662b1a4c0" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-80b4-9f69-d48426d3ec31" class=""><strong>四、 进阶优化：从“能用”到“好用”的策略</strong></h3></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-8030-8968-f24076ee75e1" class=""><strong>4.1 检索质量提升方案</strong></h3></div><div style="display:contents" dir="auto"><ol type="1" id="2a69d84a-b678-805e-8311-f31874e73044" class="numbered-list" start="1"><li><strong>重排序（Re-Ranking）</strong>：<div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-80f8-bf69-f1a038d2d0e1" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># 伪代码示例：在检索后增加重排序步骤
+from sentence_transformers import CrossEncoder
+# 加载交叉编码器（精度高但速度慢）
+reranker = CrossEncoder(&#x27;BAAI/bge-reranker-large&#x27;)
+
+def rerank_documents(query, documents, top_n=3):
+    # 构建查询-文档对
+    pairs = [[query, doc] for doc in documents]
+    # 计算相关性分数
+    scores = reranker.predict(pairs)
+    # 按分数排序并返回top_n
+    ranked_indices = np.argsort(scores)[::-1][:top_n]
+    return [documents[i] for i in ranked_indices]</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-805d-8b89-cccb12e6d922" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="2a69d84a-b678-8018-bbd2-e4b57a5412de" class="numbered-list" start="2"><li><strong>混合检索（Hybrid Search）</strong>：结合基于关键词的BM25检索和向量检索，取长补短。</li></ol></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-8081-8af2-f0b56b7e9f7b" class=""><strong>4.2 提示词工程优化</strong></h3></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8000-b89e-ceb2364c9ebb" class="bulleted-list"><li style="list-style-type:disc"><strong>角色设定</strong>：为模型设定更明确的角色，如“你是一位资深的技术专家”。</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-805a-9724-fff0b168cc64" class="bulleted-list"><li style="list-style-type:disc"><strong>分步思考</strong>：要求模型先复述检索到的信息，再基于此生成答案。</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80e7-b9e4-ee3492a284a8" class="bulleted-list"><li style="list-style-type:disc"><strong>引用格式</strong>：要求模型在答案中标注引用的具体来源。</li></ul></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-809a-a421-cbe4014164dc" class=""><strong>五、 部署与使用指南</strong></h3></div><div style="display:contents" dir="auto"><ol type="1" id="2a69d84a-b678-803f-ab2a-f9e291ce4902" class="numbered-list" start="1"><li><strong>项目结构</strong>：<div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-8076-aeb6-c90b69198afb" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">rag-assistant/
+│
+├── docs/                    # 存放知识库文档
+├── chroma_db/               # 向量数据库持久化目录
+├── knowledge_base.py        # 知识库构建模块
+├── main.py                  # FastAPI主服务
+├── gradio_ui.py            # Web界面
+└── requirements.txt</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-8012-b458-d393b206df57" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="2a69d84a-b678-802e-936b-c29d9005bdd4" class="numbered-list" start="2"><li><strong>启动步骤</strong>：<div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-80b8-915b-e9b321ecc6ae" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># 1. 安装依赖
+pip install -r requirements.txt
+
+# 2. 将您的文档（PDF、TXT）放入 docs/ 文件夹
+
+# 3. 启动FastAPI服务（后台运行）
+python main.py &amp;
+
+# 4. 启动Gradio Web界面
+python gradio_ui.py</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-80ee-9c07-ef3afb832e83" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8053-a98d-e51b88154f12" class="">访问 <code>http://localhost:7860</code>即可开始使用。</p></div></li></ol></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-807f-af99-c5438af89f32" class=""><strong>六、 总结与开源</strong></h3></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80e2-82d0-c0806f1bcde4" class="">本文深入探讨了RAG系统的完整实现路径，从技术选型、代码实现到优化策略，提供了一个生产可用的解决方案。通过本项目，你可以：</p></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-803b-9fd0-d2794f74d78e" class="bulleted-list"><li style="list-style-type:disc">✅ 掌握RAG架构的核心原理与实现</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80af-b170-d50031c55d96" class="bulleted-list"><li style="list-style-type:disc">✅ 搭建本地化的知识问答系统，保障数据隐私</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8047-b273-d224e3ff8b73" class="bulleted-list"><li style="list-style-type:disc">✅ 获得一个可二次开发的开源项目基础</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8054-a8c1-d8c7737e41ca" class="bulleted-list"><li style="list-style-type:disc">✅ 了解检索效果优化的多种实用技巧</li></ul></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-80c6-9863-d50f15e68f06" class=""><strong>七、 互动与未来展望</strong></h3></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8070-9e17-c985800523b2" class="">技术交流是进步的阶梯，欢迎在评论区留下你的想法和问题：</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8020-8ebb-fba0a12e5579" class=""><strong>实践反馈</strong>：在部署过程中遇到了什么困难？性能如何</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8035-a105-fde9d1a1c8be" class=""><strong>功能建议</strong>：你希望下一个版本增加什么功能？（如：多轮对话、联网搜索、多模态支持）</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-801a-b82f-ef03c755a635" class=""><strong>技术探讨</strong>：对于RAG的优化，你有哪些独到的见解？</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-808c-8cf0-edcd2fe8990e" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

@@ -1,0 +1,714 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>GESP等级大纲</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="24c9d84a-b678-803c-865a-dcffb0a8189f" class="page sans"><header><h1 class="page-title" dir="auto">GESP等级大纲</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>创建者</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocI05DXY3twXoSrPO2Eh2zr8xlEm_8PfhbXI0Vd2LTEuYHyj4A=s100" class="icon user-icon"/>lu cas</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>类别</th><td><span class="selected-value select-value-color-default">csp/noi</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>创建时间</th><td><time>@2025年8月11日 16:20</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80db-a354-ceb28db84fd7" class=""><strong>CCF编程能力等级认证概述</strong></p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-807e-9862-dba6d3ba7ebe" class="">CCF编程能力等级认证（GESP）为青少年计算机和编程学习者提供学业能力验证的规则和平台。GESP覆盖中小学阶段，符合年龄条件的青少年均可参加认证。C++ &amp; Python编程测试划分为一至八级，通过设定不同等级的考试目标，让学生具备计算机使用的基础能力和通过编程思维解决生活问题的能力，激发青少年编程相关知识与技术的兴趣，提高青少年编程科学技术素养，培养青少年编程综合实践能力，为广大学员在进修等方面提供编程能力水平的证明。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8008-b941-cc06d91c9460" class=""><strong>认证知识体系</strong></p></div><div style="display:contents" dir="ltr"><table id="24c9d84a-b678-80cd-b909-c2b9d0523c28" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-807a-947b-cea65ab78f56"><td id="aUsh" class="">级别</td><td id="oVcp" class="">知识内容（C++）</td><td id="sjD|" class="">知识内容（Python）</td><td id="do:R" class="">知识目标</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80ab-8713-f9f0a893b41f"><td id="aUsh" class="">一级</td><td id="oVcp" class="">计算机基础与编程环境<br/>计算机历史<br/>变量的定义与使用<br/>基本数据类型（整型、浮点型、字符型、布尔型）<br/>控制语句结构（顺序、循环、选择）<br/>基本运算（算术运算、关系运算、逻辑运算）<br/>输入输出语句</td><td id="sjD|" class="">计算机基础与编程环境<br/>计算机历史<br/>变量的定义与使用<br/>基本数据类型（整型、浮点型、字符型、布尔型）<br/>控制语句结构（顺序、循环、选择）<br/>基本运算（算术运算、关系运算、逻辑运算）<br/>输入输出语句<br/>Turtle绘图</td><td id="do:R" class="">掌握顺序、循环、分支的简单程序结构，可以使用集成开发环境进行编程与调试，通过编程基础知识的学习，完成单一功能的程序设计。</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80a1-aab8-cb9d5439d9c2"><td id="aUsh" class="">二级</td><td id="oVcp" class="">计算机的存储与网络<br/>程序设计语言的特点<br/>流程图的概念与描述<br/>ASCII编码<br/>数据类型的转换<br/>多层分支/循环结构<br/>常用数学函数（绝对值函数、平方根函数、max函数、min函数）</td><td id="sjD|" class="">计算机的存储与网络<br/>程序设计语言的特点<br/>流程图的概念与描述<br/>ASCII编码<br/>数据类型的转换<br/>多层分支/循环结构<br/>常用数学函数（绝对值函数、平方根函数、max函数、min函数）</td><td id="do:R" class="">掌握程序基本设计，能够使用简单数学函数。可以独立完成包含分支语句、循环语句等比较综合的案例，可以使用分支循环嵌套结构。</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8067-8903-d2647a22b767"><td id="aUsh" class="">三级</td><td id="oVcp" class="">数据编码（原码、反码、补码）<br/>进制转换（二进制、八进制、十进制、十六进制）<br/>位运算（与（&amp;）、或（|）、非（~）、异或（^）、左移（&lt;&lt;）、右移(&gt;&gt;)）<br/>算法的概念与描述（自然语言描述、流程图描述、伪代码描述）<br/>C++一维数组基本应用；Python列表、字典、元组、集合的基本应用、内置函数以及列表解析的使用<br/>字符串及其函数<br/>算法：枚举法<br/>算法：模拟法</td><td id="sjD|" class=""></td><td id="do:R" class="">掌握数据编码、进制转换、位运算等知识，掌握一维数组、字符串及函数的使用，能够独立使用模拟法、枚举法解决对应的算法问题。</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80d4-a2ce-e57665991577"><td id="aUsh" class="">四级</td><td id="oVcp" class="">函数的定义与调用<br/>形参与实参、作用域<br/>C++指针类型的概念及基本应用<br/>函数参数传递的概念（C++值传递、引用传递、指针传递；Python值传递、引用传递）<br/>C++结构体<br/>C++二维数组与多维数组基本应用；Python复合数据类型的嵌套<br/>算法：递推<br/>算法：排序概念和稳定性<br/>算法：排序算法（冒泡排序、插入排序、选择排序）<br/>简单算法复杂度的估算（含多项式、指数复杂度）<br/>文件重定向与文件读写操作<br/>异常处理</td><td id="sjD|" class=""></td><td id="do:R" class="">掌握函数的定义、调用及函数参数传递的方法；掌握二维数组与多维数组的使用技巧；掌握常用排序算法、文件读写和异常处理的使用。能够解决递推相关问题。</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8009-b0b3-f7501f21b639"><td id="aUsh" class="">五级</td><td id="oVcp" class="">初等数论<br/>（C++）数组模拟高精度加法、减法、乘法、除法<br/>单链表、双链表、循环链表<br/>辗转相除法（也称欧几里得算法）<br/>素数表的埃氏筛法和线性筛法<br/>唯一分解定理<br/>二分查找/二分答案（也称二分枚举法）<br/>贪心算法<br/>分治算法（归并排序和快速排序）<br/>递归<br/>算法复杂度的估算（含多项式、指数、对数复杂度）</td><td id="sjD|" class=""></td><td id="do:R" class="">掌握初等数论，线性表的知识，二分法、分治法、贪心法的思想，完成指定功能的程序。C++掌握数组模拟高精度的运算。</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80bf-b52b-d688e5c56ff0"><td id="aUsh" class="">六级</td><td id="oVcp" class="">树的定义，构造与遍历<br/>哈夫曼树<br/>完全二叉树<br/>二叉排序树<br/>哈夫曼编码<br/>格雷编码<br/>深度优先搜索算法<br/>宽度优先搜索算法（也称广度优先搜索算法）<br/>二叉树的搜索算法<br/>简单动态规划（一维动态规划、简单背包问题）<br/>面向对象的思想<br/>类的创建<br/>栈、队列、循环队列</td><td id="sjD|" class=""></td><td id="do:R" class="">掌握树的基础知识，能够分辨不同的树，并根据不同的搜索算法进行遍历，掌握简单线性动态规划和简单背包问题。</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80ac-b892-c76aef8f9c9c"><td id="aUsh" class="">七级</td><td id="oVcp" class="">数学库常用函数（三角、对数、指数）<br/>复杂动态规划（二维动态规划、动态规划最值优化）<br/>图的定义及遍历<br/>图论算法<br/>哈希表</td><td id="sjD|" class=""></td><td id="do:R" class="">掌握图的定义与遍历相关算法，能使用二维动态规划、动态规划最值优化的知识完成复杂的动态规划算法。</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8053-81a5-fd718dd6ebcf"><td id="aUsh" class="">八级</td><td id="oVcp" class="">计数原理<br/>排列与组合<br/>杨辉三角<br/>倍增法<br/>代数与平面几何<br/>算法的时间和空间效率分析<br/>算法优化</td><td id="sjD|" class=""></td><td id="do:R" class="">掌握组合数学中基本知识，通过算法的时间和空间效率分析，可以完成相对应的算法优化。</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-802a-bb60-e4daebb5df86" class=""><strong>C++&amp;Python编程三级标准</strong></p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80ea-9a81-f59a1e03ceee" class=""><strong>（一）知识点详述</strong></p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8072-8475-d5d2d07ec8c9" class="">（1）了解二进制数据编码:原码、反码、补码。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8023-b631-e69b5c82a0a9" class="">（2）掌握数据的进制转换：二进制、八进制、十进制、十六进制。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8093-9a11-ca2eb19232b1" class="">（3）掌握位运算：与(&amp;)、或(|)、非(~)、异或(^)、左移(&lt;&lt;)、右移(&gt;&gt;)的基本使用方法及原理。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-806c-97f5-c18048004863" class="">（4）了解算法的概念与描述，熟练运用自然语言、流程图、伪代码方式来描述算法。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8023-9ece-e278c4ce0792" class="">（5）C++一维数组基本应用；Python列表、字典、元组、集合的基本应用、内置函数以及列表解析的使用.</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8058-ab84-cc502d0175fe" class="">（6）掌握字符串及其函数的使用包括但不限于大小写转换、字符串搜索、分割、替换。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80ee-b3bc-e96b1bec14ad" class="">（7）理解枚举算法、模拟算法的原理及特点，可以解决实际问题。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-809f-8c61-cb6c8d18de01" class="">（8）理解模拟算法、模拟算法的原理及特点，可以解决实际问题。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8037-92a5-e425dcbe4b2c" class=""><strong>（二）考核目标</strong></p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80fc-820b-d70a7dfd33bf" class="">掌握计算机中常用进位制、位运算及数据编码的知识，掌握一维数组、字符串类型及其函数的使用，掌握枚举法、模拟法的原理和运用技巧，对于较简单的实际问题能构造算法、描述算法、实现算法并调试程序。</p></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-809b-affd-c243b9ead845" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/2130663238f3cdcad4803ebf338cc538.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/blog_migrate/2130663238f3cdcad4803ebf338cc538.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-80cc-aa64-c1e438de9ad0" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8024-8e00-e77c7b819c09" class="">编辑</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80e2-91a8-df82c90b5ca3" class=""><strong>（四）知识点描述</strong></p></div><div style="display:contents" dir="ltr"><table id="24c9d84a-b678-809b-b4b2-c78e8b1a372b" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8031-a04e-d2d4009502f5"><td id="k`{]" class="">编号</td><td id="_]{r" class="">知识块</td><td id="r&gt;@R" class="">知识点</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80cb-83ed-f7605a0f902f"><td id="k`{]" class="">1</td><td id="_]{r" class="">数据编码</td><td id="r&gt;@R" class="">原码、反码、补码</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8008-a357-f671fe58cc7a"><td id="k`{]" class="">2</td><td id="_]{r" class="">进制转换</td><td id="r&gt;@R" class="">二进制、八进制、十进制、十六进制</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-803c-9115-e86575e1b7fc"><td id="k`{]" class="">3</td><td id="_]{r" class="">位运算</td><td id="r&gt;@R" class="">与（&amp;）、或（|）、非（~）、异或（^）、左移（&lt;&lt;）、右移(&gt;&gt;)</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80ac-9bb3-c03177e266b1"><td id="k`{]" class="">4</td><td id="_]{r" class="">算法与描述</td><td id="r&gt;@R" class="">枚举法、模拟法<br/>自然语言描述、流程图描述、伪代码描述</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80de-ac6d-cd2918c3497a"><td id="k`{]" class="">5</td><td id="_]{r" class="">数据结构</td><td id="r&gt;@R" class="">C++一维数组；Python列表、字典、元组、集合、列表解析</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80da-bf9b-d86d7d7dd52d"><td id="k`{]" class="">6</td><td id="_]{r" class="">字符串及其函数</td><td id="r&gt;@R" class="">大小写转换、字符串搜索、分割、替换等</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-809b-af02-d22f77b0e50c" class=""><strong>（五）题型分布</strong></p></div><div style="display:contents" dir="ltr"><table id="24c9d84a-b678-8075-89f9-f3bce94f96fb" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8046-b857-ffc3f01b4c0d"><td id="PYA_" class="">单选题</td><td id="Kxci" class="">判断题</td><td id="ybOu" class="">编程题</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8045-81c1-cbedba7f0402"><td id="PYA_" class="">15道（2分/道）</td><td id="Kxci" class="">10道（2分/道）</td><td id="ybOu" class="">2道（25分/道）</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-802b-8443-eb35fdf4bb07" class="">考试时间：120分钟</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80fa-8acd-d98945ada3f8" class=""><strong>C++&amp;Python编程四级标准</strong></p></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80c6-b455-fe2add8344ac" class="bulleted-list"><li style="list-style-type:disc"><strong>知识点详述</strong></li></ul></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-804e-8c4a-ea0b5edfcad0" class="">（1）理解C++指针类型的概念，掌握指针类型变量的定义、赋值、解引用。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80f7-abd3-d48822ab91bc" class="">（2）掌握C++结构体、二维及多维数组的基本概念及使用；掌握Python复合数据类型的嵌套使用。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8099-af4b-ce4aa6b7b003" class="">（3）理解模块化编程思想，掌握函数的声明、定义及调用，掌握形参与实参的概念及区别。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80f1-9270-e62758282492" class="">（4）掌握变量作用域的概念，理解全局变量与局部变量的区别。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80d7-b4ac-e3506c0fabc4" class="">（5）掌握函数参数的传递方式：C++值传递、引用传递、指针传递；Python值传递、引用传递。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8034-8b5f-edc9a2213ec1" class="">（6）掌握递推算法基本思想、递推关系式的推导以及递推问题求解。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-801a-a8b1-dcc25e4c9403" class="">（7）掌握排序算法的概念，了解内排序和外排序的概念及差别，理解排序算法的时间复杂度、空间复杂度、使用场景以及稳定性。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8046-aece-c709b693e900" class="">（8）掌握排序算法中的冒泡排序、插入排序、选择排序的算法思想、排序步骤及代码实现。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8071-84d0-c203a087ecaa" class="">（9）简单算法复杂度的估算，含多项式、指数复杂度。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80b2-9d32-f85652f82cb6" class="">（10）掌握文件操作中的重定向，实现文件读写操作，了解文本文件的分类，掌握写操作、读操作、读写操作。</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80bc-bff8-dbc2016aa6a2" class="">（11）了解异常处理机制，掌握异常处理的常用方法。</p></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8068-b5b3-cdf58dca2af7" class="bulleted-list"><li style="list-style-type:disc"><strong>考核目标</strong></li></ul></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80aa-a0ab-c1a0fe4550d4" class="">掌握C++指针类型、二维及多维数组的基本使用；掌握Python复合类型的嵌套使用。通过函数相关知识的学习，掌握模块化设计思想，具备编写自定义函数程序的能力。掌握文件读写操作，并通过对排序算法、递推法的学习，可以根据不同的使用场景，合理选择最优的算法。</p></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80af-9f5f-ca7906882d5d" class="bulleted-list"><li style="list-style-type:disc"><strong>知识块</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-805d-b38b-e33c5f538593" class="bulleted-list"><li style="list-style-type:disc">编辑<div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-80ec-99fa-e6a6ae216189" class="image"><a href="https://i-blog.csdnimg.cn/blog_migrate/0be1415223d1884e4075e6e602b66f42.png"><img style="width:700px" src="https://i-blog.csdnimg.cn/blog_migrate/0be1415223d1884e4075e6e602b66f42.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-80a8-8009-fdc11b292a02" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div></li></ul></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80ae-8799-e685dd37403a" class=""><strong>（四）知识点描述</strong></p></div><div style="display:contents" dir="ltr"><table id="24c9d84a-b678-8085-a875-fe45cd21fc0d" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80a1-bb41-d0dd09d3507a"><td id="MEuI" class="">编号</td><td id="AjZW" class="">知识块</td><td id="sLZI" class="">知识点</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8045-ac02-d0fe90178b9c"><td id="MEuI" class="">1</td><td id="AjZW" class="">指针</td><td id="sLZI" class="">指针类型，指针类型定义变量，指针类型变量的赋值、解引用</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-801e-882e-c9c3806f7428"><td id="MEuI" class="">2</td><td id="AjZW" class="">二维及多维数组</td><td id="sLZI" class="">C++二维及多维数组的定义、使用<br/>Python复合类型的嵌套使用</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8064-994c-e234a6bfa63f"><td id="MEuI" class="">3</td><td id="AjZW" class="">结构体</td><td id="sLZI" class="">结构体定义和使用，结构体数组，结构体指针，结构体嵌套结构体，结构体做函数参数 ，结构体中 const使用场景</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80b8-a609-c66b1ec78cdc"><td id="MEuI" class="">4</td><td id="AjZW" class="">函数</td><td id="sLZI" class="">函数的定义、调用、声明<br/>形参、实参<br/>全局作用域、局部作用域<br/>值传递、引用传递</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80bd-b9ff-c24dc1e5a1b1"><td id="MEuI" class="">5</td><td id="AjZW" class="">递推算法</td><td id="sLZI" class="">递推算法基本思想、递推关系式推导</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80a8-9d74-da36d692267b"><td id="MEuI" class="">6</td><td id="AjZW" class="">排序算法</td><td id="sLZI" class="">冒泡排序、插入排序、选择排序<br/>时间复杂度、空间复杂度、算法稳定性<br/>简单算法复杂度的估算，含多项式、指数复杂度</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8084-9e28-cf4ebe6a56e1"><td id="MEuI" class="">7</td><td id="AjZW" class="">文件操作</td><td id="sLZI" class="">文件重定向，读操作、写操作、读写操作</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80a6-88da-db647c225d44"><td id="MEuI" class="">8</td><td id="AjZW" class="">异常处理</td><td id="sLZI" class="">异常处理机制和常用方法</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80d1-9498-d83c1536de52" class=""><strong>（五）题型分布</strong></p></div><div style="display:contents" dir="ltr"><table id="24c9d84a-b678-801f-ad21-eef445bf7d90" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8067-bfa5-eb9c7ae77020"><td id="vbTX" class="">单选题</td><td id="L@;C" class="">判断题</td><td id="g@OI" class="">编程题</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-800d-b060-db4f0a200b76"><td id="vbTX" class="">15道（2分/道）</td><td id="L@;C" class="">10道（2分/道）</td><td id="g@OI" class="">2道（25分/道）</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-804f-bd0f-c6a535f2fa37" class="">考试时间：120分钟</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80ef-90c2-c5aef794c74d" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

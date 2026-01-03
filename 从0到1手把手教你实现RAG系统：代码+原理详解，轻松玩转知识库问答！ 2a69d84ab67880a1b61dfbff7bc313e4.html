@@ -1,0 +1,915 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>从0到1手把手教你实现RAG系统：代码+原理详解，轻松玩转知识库问答！</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="2a69d84a-b678-80a1-b61d-fbff7bc313e4" class="page sans"><header><h1 class="page-title" dir="auto">从0到1手把手教你实现RAG系统：代码+原理详解，轻松玩转知识库问答！</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>创建者</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocI05DXY3twXoSrPO2Eh2zr8xlEm_8PfhbXI0Vd2LTEuYHyj4A=s100" class="icon user-icon"/>lu cas</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>类别</th><td><span class="selected-value select-value-color-brown">ai</span><span class="selected-value select-value-color-yellow">python</span><span class="selected-value select-value-color-pink">其他</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>创建时间</th><td><time>@2025年11月9日 13:40</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8082-999d-e7c99c51745a" class="">在AI技术飞速发展的今天，大模型虽然强大，但存在知识滞后、专业领域理解不足的问题。今天我要分享的RAG（检索增强生成）技术，正是解决这一痛点的利器！本文将手把手带你从零实现一个完整的RAG系统，包含可运行的代码和原理解析。</p></div><div style="display:contents" dir="auto"><h2 id="2a69d84a-b678-8087-8cf3-d9ec95f6f0e9" class="">一、什么是RAG？为什么它如此重要？</h2></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80cd-abc7-d47a55e11b21" class="">RAG（Retrieval-Augmented Generation）结合了信息检索和文本生成的优势。其核心思想是：在回答问题前，先从知识库中检索相关信息，然后将这些信息作为上下文提供给大模型，从而生成更准确、更专业的回答。</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80e0-8e16-f4946d011a04" class="">传统大模型的局限性：</p></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80ce-9d53-f0e6c5fa71c5" class="bulleted-list"><li style="list-style-type:disc">知识截止日期固定，无法获取最新信息</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-804b-88bc-c940b03a7f1f" class="bulleted-list"><li style="list-style-type:disc">对专业领域知识掌握有限</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80ff-a43b-f6c616b218d2" class="bulleted-list"><li style="list-style-type:disc">容易产生&quot;幻觉&quot;，编造不存在的信息</li></ul></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80b0-9f74-c0a41b57fd1d" class="">RAG的优势：</p></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80e0-a7f2-f04a2f5c1132" class="bulleted-list"><li style="list-style-type:disc">实时获取最新信息</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-805e-a513-f7f6d2aba45d" class="bulleted-list"><li style="list-style-type:disc">支持专业领域知识库</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8067-90e1-e3043135cd93" class="bulleted-list"><li style="list-style-type:disc">提供答案来源，可验证性强</li></ul></div><div style="display:contents" dir="auto"><h2 id="2a69d84a-b678-809c-b55f-e39f6bddc037" class="">二、RAG系统架构全解析</h2></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-801c-bf3f-d3e32038b6f3" class="">一个完整的RAG系统包含以下核心模块：</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-80eb-bc3f-d1b72d0cfdfa" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">知识库预处理 → 向量化存储 → 问题检索 → 增强生成</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-808a-a0d7-ff1403ca23d1" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-802d-9983-f31c72ef7d2f" class="">下面我们分步骤实现每个模块。</p></div><div style="display:contents" dir="auto"><h2 id="2a69d84a-b678-8043-bc1a-e8faedd0a527" class="">三、手把手代码实现</h2></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-806e-9ee2-e9c20be379f5" class="">1. 环境准备和依赖安装</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-8026-b135-e58927f55c28" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all"># requirements.txt
+pip install langchain openai chromadb sentence-transformers pypdf2</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-808c-ba8b-fa22b9416c75" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-8077-8d28-dbc31fe483fb" class="">2. 文档加载和预处理模块</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-8049-8f26-e1881ccf3661" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">import os
+from langchain.document_loaders import PyPDFLoader, TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+class DocumentProcessor:
+    def __init__(self, chunk_size=500, chunk_overlap=50):
+        self.text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap
+        )
+
+    def load_documents(self, file_path):
+        &quot;&quot;&quot;加载文档并根据文件类型选择加载器&quot;&quot;&quot;
+        if file_path.endswith(&#x27;.pdf&#x27;):
+            loader = PyPDFLoader(file_path)
+        elif file_path.endswith(&#x27;.txt&#x27;):
+            loader = TextLoader(file_path, encoding=&#x27;utf-8&#x27;)
+        else:
+            raise ValueError(&quot;Unsupported file format&quot;)
+
+        documents = loader.load()
+        return self.split_documents(documents)
+
+    def split_documents(self, documents):
+        &quot;&quot;&quot;将文档切分成小块&quot;&quot;&quot;
+        return self.text_splitter.split_documents(documents)
+
+# 使用示例
+processor = DocumentProcessor()
+documents = processor.load_documents(&quot;knowledge_base.pdf&quot;)
+print(f&quot;文档切分成 {len(documents)} 个块&quot;)import os
+from langchain.document_loaders import PyPDFLoader, TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+class DocumentProcessor:
+    def __init__(self, chunk_size=500, chunk_overlap=50):
+        self.text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap
+        )
+
+    def load_documents(self, file_path):
+        &quot;&quot;&quot;加载文档并根据文件类型选择加载器&quot;&quot;&quot;
+        if file_path.endswith(&#x27;.pdf&#x27;):
+            loader = PyPDFLoader(file_path)
+        elif file_path.endswith(&#x27;.txt&#x27;):
+            loader = TextLoader(file_path, encoding=&#x27;utf-8&#x27;)
+        else:
+            raise ValueError(&quot;Unsupported file format&quot;)
+
+        documents = loader.load()
+        return self.split_documents(documents)
+
+    def split_documents(self, documents):
+        &quot;&quot;&quot;将文档切分成小块&quot;&quot;&quot;
+        return self.text_splitter.split_documents(documents)
+
+# 使用示例
+processor = DocumentProcessor()
+documents = processor.load_documents(&quot;knowledge_base.pdf&quot;)
+print(f&quot;文档切分成 {len(documents)} 个块&quot;)</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-8057-bcd8-e3a9c07ab9fb" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-8078-8322-f3c2cae99ccd" class="">3. 向量化存储模块</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-800c-a5dc-e039ba287421" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+from sentence_transformers import SentenceTransformer
+import chromadb
+
+class VectorStore:
+    def __init__(self, model_name=&#x27;all-MiniLM-L6-v2&#x27;):
+        self.model = SentenceTransformer(model_name)
+        self.client = chromadb.Client()
+        self.collection = self.client.create_collection(&quot;knowledge_base&quot;)
+
+    def add_documents(self, documents):
+        &quot;&quot;&quot;将文档向量化并存储&quot;&quot;&quot;
+        texts = [doc.page_content for doc in documents]
+        embeddings = self.model.encode(texts)
+
+        # 存储到向量数据库
+        ids = [str(i) for i in range(len(texts))]
+        self.collection.add(
+            embeddings=embeddings.tolist(),
+            documents=texts,
+            ids=ids
+        )
+
+    def search(self, query, top_k=3):
+        &quot;&quot;&quot;检索相关文档&quot;&quot;&quot;
+        query_embedding = self.model.encode([query]).tolist()
+        results = self.collection.query(
+            query_embeddings=query_embedding,
+            n_results=top_k
+        )
+        return results[&#x27;documents&#x27;][0]
+
+# 初始化向量存储
+vector_store = VectorStore()
+vector_store.add_documents(documents)</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-80a4-8ad2-e75d5b2ac9c3" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-80d4-b865-dac1068270ea" class="">4. 检索增强生成核心模块</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-802b-b7de-e6385f4441bf" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">from openai import OpenAI
+import json
+
+class RAGSystem:
+    def __init__(self, vector_store, api_key):
+        self.vector_store = vector_store
+        self.client = OpenAI(api_key=api_key)
+
+    def retrieve(self, query, top_k=3):
+        &quot;&quot;&quot;检索相关文档&quot;&quot;&quot;
+        return self.vector_store.search(query, top_k)
+
+    def generate_prompt(self, query, contexts):
+        &quot;&quot;&quot;构建增强的提示词&quot;&quot;&quot;
+        context_str = &quot;\n\n&quot;.join(contexts)
+
+        prompt = f&quot;&quot;&quot;基于以下背景信息回答问题。如果信息不足，请如实告知。
+
+背景信息：
+{context_str}
+
+问题：{query}
+
+请根据背景信息提供准确、专业的回答：&quot;&quot;&quot;
+        return prompt
+
+    def generate_answer(self, query, top_k=3):
+        &quot;&quot;&quot;生成答案&quot;&quot;&quot;
+        # 检索相关文档
+        contexts = self.retrieve(query, top_k)
+
+        # 构建提示词
+        prompt = self.generate_prompt(query, contexts)
+
+        # 调用大模型生成答案
+        response = self.client.chat.completions.create(
+            model=&quot;gpt-3.5-turbo&quot;,
+            messages=[
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: prompt}
+            ],
+            temperature=0.3
+        )
+
+        return {
+            &quot;answer&quot;: response.choices[0].message.content,
+            &quot;sources&quot;: contexts
+        }
+
+# 初始化RAG系统
+rag_system = RAGSystem(vector_store, &quot;your-openai-api-key&quot;)</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-80de-85c5-e1ad8445e3b8" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h2 id="2a69d84a-b678-80aa-8d66-c3f176a16b0e" class="">四、完整示例演示</h2></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-80bc-9d1d-d9c6fdd5a0b5" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">def main():
+    # 1. 处理知识库文档
+    processor = DocumentProcessor()
+    documents = processor.load_documents(&quot;ai_technology.pdf&quot;)
+
+    # 2. 构建向量数据库
+    vector_store = VectorStore()
+    vector_store.add_documents(documents)
+
+    # 3. 初始化RAG系统
+    rag = RAGSystem(vector_store, &quot;your-api-key&quot;)
+
+    # 4. 问答演示
+    questions = [
+        &quot;什么是机器学习？&quot;,
+        &quot;Transformer模型的主要创新点是什么？&quot;,
+        &quot;请解释注意力机制的原理&quot;
+    ]
+
+    for question in questions:
+        result = rag.generate_answer(question)
+        print(f&quot;问题：{question}&quot;)
+        print(f&quot;答案：{result[&#x27;answer&#x27;]}&quot;)
+        print(f&quot;来源文档数：{len(result[&#x27;sources&#x27;])}&quot;)
+        print(&quot;-&quot; * 50)
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-80cb-9404-cce5926fcf92" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h2 id="2a69d84a-b678-8071-af3c-fa50f39be28c" class="">五、高级优化技巧</h2></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-80bc-83e9-eb536ea38d13" class="">1. 混合检索策略</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-8040-b2b7-c983135808b3" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">class HybridRetriever:
+    def __init__(self, vector_store, bm25_retriever):
+        self.vector_retriever = vector_store
+        self.bm25_retriever = bm25_retriever
+
+    def search(self, query, top_k=3):
+        # 向量检索
+        vector_results = self.vector_retriever.search(query, top_k*2)
+        # 关键词检索
+        bm25_results = self.bm25_retriever.search(query, top_k*2)
+
+        # 结果融合和去重
+        combined = self.rrf_fusion([vector_results, bm25_results])
+        return combined[:top_k]
+
+    def rrf_fusion(self, results_list):
+        &quot;&quot;&quot;互逆排序融合算法&quot;&quot;&quot;
+        # 实现略
+        pass</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-80c6-bae5-ed93af9724b4" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="2a69d84a-b678-80ac-8bda-e134acff637f" class="">2. 查询重写优化</h3></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a69d84a-b678-803d-90b9-c364d9c42e2d" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">def query_rewrite(original_query, conversation_history):
+    &quot;&quot;&quot;基于对话历史重写查询&quot;&quot;&quot;
+    prompt = f&quot;&quot;&quot;
+    根据对话历史优化当前查询，使其更利于检索相关文档。
+
+    对话历史：{conversation_history}
+    当前查询：{original_query}
+
+    优化后的查询：&quot;&quot;&quot;
+
+    # 调用LLM进行查询重写
+    rewritten = llm_complete(prompt)
+    return rewritten</code></pre></div><div style="display:contents" dir="ltr"><figure id="2a69d84a-b678-804f-82be-e24de8abd8ae" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h2 id="2a69d84a-b678-80d8-b966-d118a2b1b960" class="">六、实际应用场景</h2></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80dc-9ff3-fc33d13e7725" class="bulleted-list"><li style="list-style-type:disc"><strong>企业知识库问答</strong>：内部文档、技术手册的智能查询</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80fd-b783-d3096262e7f8" class="bulleted-list"><li style="list-style-type:disc"><strong>学术研究助手</strong>：论文库的智能检索和分析</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8085-bc2f-e3d001b7af74" class="bulleted-list"><li style="list-style-type:disc"><strong>客服系统</strong>：产品文档和FAQ的智能应答</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8046-a375-c29a8139dec6" class="bulleted-list"><li style="list-style-type:disc"><strong>个人学习助手</strong>：个人知识库的管理和查询</li></ul></div><div style="display:contents" dir="auto"><h2 id="2a69d84a-b678-80c2-b075-f03c62968552" class="">七、性能优化建议</h2></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80da-b40c-d0ca2844d63e" class="bulleted-list"><li style="list-style-type:disc"><strong>分块策略优化</strong>：根据文档类型调整分块大小</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8054-957e-d307247663c7" class="bulleted-list"><li style="list-style-type:disc"><strong>多索引支持</strong>：对不同类型的知识建立专门索引</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-805a-b885-fa663169cd77" class="bulleted-list"><li style="list-style-type:disc"><strong>缓存机制</strong>：对常见查询结果进行缓存</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-808e-855f-f67f9f6d8775" class="bulleted-list"><li style="list-style-type:disc"><strong>异步处理</strong>：提高系统并发处理能力</li></ul></div><div style="display:contents" dir="auto"><h2 id="2a69d84a-b678-807c-8539-cdf47407bd5d" class="">总结</h2></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8009-a49a-d34c200c8408" class="">本文完整实现了RAG系统的核心功能，从文档处理到检索增强生成的整个流程。通过代码+原理的讲解方式，希望能帮助大家深入理解RAG技术。</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80cc-b781-fd9276a40700" class=""><strong>关键要点：</strong></p></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-8045-a912-db155c4b93ef" class="bulleted-list"><li style="list-style-type:disc">RAG有效解决了大模型的知识局限性问题</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-804d-a909-d7b4b36060f2" class="bulleted-list"><li style="list-style-type:disc">向量检索的质量直接影响最终效果</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-809b-b17c-ee6b200b9d7d" class="bulleted-list"><li style="list-style-type:disc">提示词工程是提升生成质量的关键</li></ul></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80a1-be91-f9694c7013f2" class=""><strong>进一步学习方向：</strong></p></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80e7-b97e-d556bd05921e" class="bulleted-list"><li style="list-style-type:disc">探索更先进的检索算法（如ColBERT、DPR）</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80ff-9556-fbd7419fcb24" class="bulleted-list"><li style="list-style-type:disc">研究多模态RAG系统</li></ul></div><div style="display:contents" dir="auto"><ul id="2a69d84a-b678-80df-90d2-e59d329fbe3a" class="bulleted-list"><li style="list-style-type:disc">学习RAG系统的评估和优化方法</li></ul></div><div style="display:contents" dir="auto"><hr id="2a69d84a-b678-8008-bdb4-e4729c88d70b"/></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80f7-8139-d6ca96b2c20a" class=""><strong>思考题</strong>：在你的专业领域，RAG技术可以解决哪些具体问题？欢迎在评论区分享你的想法！</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-80b5-9a44-dca58ab68075" class="">如果觉得本文对你有帮助，欢迎点赞收藏🌟，我会继续分享更多AI实战技术！有任何问题也欢迎留言讨论～</p></div><div style="display:contents" dir="auto"><p id="2a69d84a-b678-8024-a102-fa63c1d28563" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
