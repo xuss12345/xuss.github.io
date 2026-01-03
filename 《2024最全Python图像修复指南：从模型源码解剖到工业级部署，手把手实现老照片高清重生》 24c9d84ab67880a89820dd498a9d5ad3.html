@@ -1,0 +1,785 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>《2024最全Python图像修复指南：从模型源码解剖到工业级部署，手把手实现老照片高清重生》</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="24c9d84a-b678-80a8-9820-dd498a9d5ad3" class="page sans"><header><h1 class="page-title" dir="auto">《2024最全Python图像修复指南：从模型源码解剖到工业级部署，手把手实现老照片高清重生》</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-created_by"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/user-circle_gray.svg" style="width:14px;height:14px;display:block"/></span>创建者</th><td><span class="user"><img src="https://lh3.googleusercontent.com/a/ACg8ocI05DXY3twXoSrPO2Eh2zr8xlEm_8PfhbXI0Vd2LTEuYHyj4A=s100" class="icon user-icon"/>lu cas</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/list_gray.svg" style="width:14px;height:14px;display:block"/></span>类别</th><td><span class="selected-value select-value-color-brown">ai</span><span class="selected-value select-value-color-yellow">python</span><span class="selected-value select-value-color-pink">其他</span></td></tr><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/clock_gray.svg" style="width:14px;height:14px;display:block"/></span>创建时间</th><td><time>@2025年8月11日 17:49</time></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80c8-9de4-cab8111b950b" class=""><strong>引言：AI修复如何拯救人类记忆？</strong></h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8092-a001-eaa42d24def2" class="">当大英博物馆用GAN网络复原3000年前壁画时</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80c8-836c-f3fca7014943" class="">，当北京协和医院用3D血管模型避免手术事故时，这项技术早已突破实验室界限。<strong>今天，你将获得的不仅是代码，更是打通学术与产业的知识图谱</strong>——包含腾讯AI Lab未公开的掩膜标注技巧、故宫古画修复团队的多尺度渐进策略，以及医疗影像修复中的伦理避坑指南。</p></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80a6-8d1a-c583731f43db" class=""><strong>第一章：模型解剖室——7大主流架构全拆解</strong></h3></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-804b-bd86-ca33b438e9de" class=""><strong>1.1 DeepFillv2：腾讯AI Lab的工业级解决方案</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80e0-a522-e907027f0c42" class="bulleted-list"><li style="list-style-type:disc"><strong>核心创新</strong>：门控卷积+多尺度特征融合</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8049-b9b9-caafbfad1f47" class="bulleted-list"><li style="list-style-type:disc"><strong>代码解剖</strong>：</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-800c-a717-fce4a886147b" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">class GateConv(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.gate = nn.Sequential(
+            nn.Conv2d(in_channels, 1, 3, padding=1),
+            nn.Sigmoid()
+        )
+        self.conv = nn.Conv2d(in_channels, out_channels, 3, padding=1)
+
+    def forward(self, x):
+        mask = self.gate(x)  # 动态生成注意力掩膜
+        return self.conv(x * mask)  # 门控特征融合</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-8017-92a2-d20709cfac32" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80fc-bcef-eb89e357b790" class=""><strong>1.2 MAT：微软亚洲研究院的纹理大师</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8025-ae1a-cc7d4c38a5e9" class="bulleted-list"><li style="list-style-type:disc"><strong>三大突破</strong>：<div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80ab-8e01-e4d47cc0e013" class="numbered-list" start="1"><li>非局部注意力机制（处理512x512以上大图）</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80dd-9ec6-e63480daa223" class="numbered-list" start="2"><li>自适应特征选择模块</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80c2-90cf-d31ea9d02f62" class="numbered-list" start="3"><li>多任务联合训练策略</li></ol></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80cf-b204-d2d0c30dec7d" class=""><strong>1.3 Hollywood Inpainting：好莱坞特效级修复</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8094-b9b6-ece263b6a554" class="bulleted-list"><li style="list-style-type:disc"><strong>商业级应用</strong>：<div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8049-b227-f53aadcf5520" class="bulleted-list"><li style="list-style-type:circle">电影海报破损修复（《阿凡达》重制版案例）</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8054-8f40-dd9162c15dea" class="bulleted-list"><li style="list-style-type:circle">游戏角色皮肤瑕疵自动消除</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8036-b64d-d1ce491818ca" class=""><strong>第二章：数据工程——构建工业级数据集的9个铁律</strong></h3></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8009-89ef-c5b9734b2125" class=""><strong>2.1 数据采集的死亡陷阱</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8014-87a8-d97598807946" class="bulleted-list"><li style="list-style-type:disc"><strong>错误案例</strong>：直接爬取网络图片 → 产生大量水印干扰</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8048-ab28-f4f3f12e3725" class="bulleted-list"><li style="list-style-type:disc"><strong>正确姿势</strong>：<div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8042-8bce-ebf5a4823b4f" class="numbered-list" start="1"><li>使用Adobe Bridge筛选RAW格式原片</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80e8-bd57-f58a4d859cdd" class="numbered-list" start="2"><li>部署分布式爬虫规避反爬机制</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8021-aa16-de9d8d911688" class="numbered-list" start="3"><li>建立元数据库（EXIF/IPTC/XMP全解析）</li></ol></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80bd-8be7-f1ea492dd36f" class=""><strong>2.2 标注系统的量子跃迁</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-809f-b326-d07243298807" class="bulleted-list"><li style="list-style-type:disc"><strong>半自动标注流程</strong></li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-8032-aae2-e85fb4cd83e9" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">graph TD
+A[人工标注10%样本] --&gt; B[训练初始标注模型]
+B --&gt; C[半自动标注剩余样本]
+C --&gt; D[人工校验关键区域]</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-807b-aead-d0e2e0005c59" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80c2-9783-fb7d7aa49e1b" class=""><strong>2.3 数据增强的暗黑艺术</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8029-aea1-ebd804ea4257" class="bulleted-list"><li style="list-style-type:disc"><strong>物理模拟增强</strong>：</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-8092-b7de-cd37ab1ffd6d" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">def add_aging_effects(img):
+    # 模拟百年氧化
+    img = cv2.addWeighted(img, 0.8, np.random.randn(*img.shape), 0.2, 0)
+    # 添加虫蛀效果
+    holes = np.random.randint(0,255,img.shape) &gt; 200
+    img[holes] = 255
+    return img</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-8010-9d64-ccca7d6d8388" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-807c-aafc-f9a0a22c18b2" class=""><strong>第三章：训练调参——GPU集群上的炼丹术</strong></h3></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8088-b1f4-eea3d489111d" class=""><strong>3.1 损失函数炼金术</strong></h3></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-802f-881d-f2ad16f395d7" class=""><strong>1. L1 Loss（平均绝对误差）</strong></h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-801e-8e9d-c5a3d2f37844" class=""><strong>数学表达式</strong>：</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8075-9841-d593175fd117" class="">LL1=N1∑i=1N∣xi−yi∣</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-803c-8e66-d2f508d853f6" class=""><strong>适用阶段</strong>：</p></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-800a-8fb3-f8ab55b4d021" class="bulleted-list"><li style="list-style-type:disc"><strong>初期收敛</strong>：快速降低像素级差异</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80d1-adde-e5799c3a6558" class="bulleted-list"><li style="list-style-type:disc"><strong>粗糙修复</strong>：处理大面积缺失或严重模糊</li></ul></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80fc-8bc5-e3a4fb12113b" class=""><strong>防坑指南</strong>：</p></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80cc-a618-ec903257577e" class="numbered-list" start="1"><li><strong>纹理丢失风险</strong>：对高频细节不敏感，修复后可能出现&quot;塑料感&quot;	→ <strong>解决方案</strong>：与感知损失（Perceptual Loss）联合使用</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-808f-9752-c24cc3bdbdd3" class="numbered-list" start="2"><li><strong>异常值敏感</strong>：单个坏点可能导致整体修复偏移	→ <strong>解决方案</strong>：采用加权L1（对边缘区域赋予更高权重）</li></ol></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-800e-90bf-d0e77808e167" class=""><strong>代码示例</strong>：</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-8080-923c-fdf567aa125d" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">class L1Loss(nn.Module):
+    def __init__(self):
+        super().__init__()
+    def forward(self, pred, target):
+        return torch.mean(torch.abs(pred - target))</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-806c-9e2a-ca75f6c53f77" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><hr id="24c9d84a-b678-80c3-8dfe-de56661cb613"/></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8091-b6a0-ca14f5372cf6" class=""><strong>2. Perceptual Loss（感知损失）</strong></h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80a5-baf4-df9cdd6ec881" class=""><strong>数学表达式</strong>：</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8015-bef3-da82f155bd3a" class="">Lperc=∑j=1Jλj∥ϕj(x)−ϕj(y)∥22</p></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8004-b565-cbe45a4c2161" class="bulleted-list"><li style="list-style-type:disc">ϕj：预训练VGG网络第j层的特征图</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8016-ad8a-c16a139d6adf" class="bulleted-list"><li style="list-style-type:disc">λj：各层权重（通常高层权重更高）</li></ul></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80d0-a9b1-dccb4681237e" class=""><strong>适用阶段</strong>：</p></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8065-bb7e-dd3b4a7557de" class="bulleted-list"><li style="list-style-type:disc"><strong>中期优化</strong>：恢复纹理细节（如皮肤质感、布料褶皱）</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-804d-8623-fd27ccff1063" class="bulleted-list"><li style="list-style-type:disc"><strong>风格对齐</strong>：保持修复区域与周围环境风格一致</li></ul></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-803e-8b66-cd5beb44cdd7" class=""><strong>防坑指南</strong>：</p></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80de-9b98-ff8905709d3c" class="numbered-list" start="1"><li><strong>特征空间错位</strong>：若修复图像与目标图像不在同一语义空间	→ <strong>解决方案</strong>：冻结VGG网络参数，仅计算特征差异</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8012-a6e1-ccd20e463fcb" class="numbered-list" start="2"><li><strong>计算开销大</strong>：VGG前向传播耗时占训练时间40%+	→ <strong>解决方案</strong>：使用轻量化网络（如MobileNetV3）替代VGG</li></ol></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8074-b757-c225457f43a5" class=""><strong>代码示例</strong>：</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-80d7-8d0a-e233d11c2949" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">class PerceptualLoss(nn.Module):
+    def __init__(self):
+        vgg = models.vgg19(pretrained=True).features.eval()
+        self.vgg_layers = nn.Sequential(*list(vgg)[:23])  # 截取conv4_2层前
+    def forward(self, pred, target):
+        pred_feat = self.vgg_layers(pred)
+        target_feat = self.vgg_layers(target)
+        return F.mse_loss(pred_feat, target_feat)</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-80a6-8f2f-dda8a1f89015" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><hr id="24c9d84a-b678-801e-b6d5-e5b2ed99202c"/></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80eb-adde-e1577b8e7f8a" class=""><strong>3. Style Loss（风格损失）</strong></h3></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80be-8aef-f8015026c09e" class=""><strong>数学表达式</strong>：</p></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80ce-96f5-c8ccab8c0b84" class="">Lstyle=∑lwl⋅4Nl2Ml21∑i,j(Gijl−Aijl)2</p></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8097-ad9d-f746be2b68a2" class="bulleted-list"><li style="list-style-type:disc">G：生成图像Gram矩阵</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8066-b01e-d796330c3593" class="bulleted-list"><li style="list-style-type:disc">A：风格参考图像Gram矩阵</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8075-b157-c63d9e77d6bb" class="bulleted-list"><li style="list-style-type:disc">Nl：第l层特征图数量</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8017-b554-fce3ae32ac74" class="bulleted-list"><li style="list-style-type:disc">Ml：单张特征图尺寸</li></ul></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-80ac-ab17-cd2830e26d45" class=""><strong>适用阶段</strong>：</p></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80b4-9917-fc3149f3e5e2" class="bulleted-list"><li style="list-style-type:disc"><strong>后期微调</strong>：消除修复区域的风格突变</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-808f-801b-f04e0b6afd7f" class="bulleted-list"><li style="list-style-type:disc"><strong>创意修复</strong>：将破损区域风格化（如将划痕转为水墨画效果）</li></ul></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8024-9a22-e8ef2c8ad7f9" class=""><strong>防坑指南</strong>：</p></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80d7-8209-dac71f82770b" class="numbered-list" start="1"><li><strong>风格污染</strong>：修复区域风格与整体不协调	→ <strong>解决方案</strong>：采用多尺度风格约束</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8019-be35-fd1f643264eb" class="numbered-list" start="2"><li><strong>计算复杂度高</strong>：Gram矩阵维度爆炸（如512通道图像）	→ <strong>解决方案</strong>：仅取前16个主成分（PCA降维）</li></ol></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-802d-a108-db6eee627201" class=""><strong>代码示例</strong>：</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-806a-82de-ca318e0a483d" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">def gram_matrix(input):
+    a, b, c, d = inputs.size()
+    features = inputs.view(a * b, c * d)
+    G = torch.mm(features, features.t())
+    return G.div(a * b * c * d)
+
+class StyleLoss(nn.Module):
+    def __init__(self, style_img):
+        super().__init__()
+        self.style_feat = gram_matrix(extract_features(style_img))
+    def forward(self, pred_feat):
+        pred_gram = gram_matrix(pred_feat)
+        return F.mse_loss(pred_gram, self.style_feat)</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-804e-b827-f64cd502867b" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><hr id="24c9d84a-b678-8036-b8e9-d4e6a9db8bdb"/></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8095-9dfe-fdbc28d01d12" class=""><strong>实战避坑对照表</strong></h3></div><div style="display:contents" dir="ltr"><table id="24c9d84a-b678-8011-846b-ed711a5f3802" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80c5-a26b-ef7783a057d6"><th id="Zr_V" class="simple-table-header-color simple-table-header">损失类型</th><th id="TqLZ" class="simple-table-header-color simple-table-header">典型问题</th><th id="?sgn" class="simple-table-header-color simple-table-header">解决方案</th><th id="qMLv" class="simple-table-header-color simple-table-header">适用场景</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80a2-bc10-f6c50bde7b48"><td id="Zr_V" class="">L1 Loss</td><td id="TqLZ" class="">修复后图像模糊</td><td id="?sgn" class="">结合TV Loss（总变差）</td><td id="qMLv" class="">初步轮廓重建</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80d2-95f3-c571bd19f9b7"><td id="Zr_V" class="">Perceptual Loss</td><td id="TqLZ" class="">面部特征扭曲</td><td id="?sgn" class="">添加ID Loss（身份保持）</td><td id="qMLv" class="">人像修复</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80f2-9e33-f0362c140a81"><td id="Zr_V" class="">Style Loss</td><td id="TqLZ" class="">风格冲突</td><td id="?sgn" class="">多风格融合（AdaIN）</td><td id="qMLv" class="">艺术化修复</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="24c9d84a-b678-800f-88b3-ff8f08fd7629"/></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8071-a41b-f4a764f0f54f" class=""><strong>超参数调优黄金法则</strong></h3></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80a6-ac5e-d0df23ced672" class="numbered-list" start="1"><li><strong>损失权重分配</strong>：<div style="display:contents" dir="auto"><ul id="24c9d84a-b678-809d-a42f-cc7e788900cd" class="bulleted-list"><li style="list-style-type:disc">L1 : Perceptual : Style = 5 : 3 : 1（通用场景）</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8014-8b5b-d0c001a4a959" class="bulleted-list"><li style="list-style-type:disc">人像修复需提升Perceptual权重至60%</li></ul></div></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-809f-9aee-dfd86eba0cf3" class="numbered-list" start="2"><li><strong>动态衰减策略</strong>：</li></ol></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8039-8db7-e2d60a06499c" class="bulleted-list"><li style="list-style-type:disc"><code># 训练后期降低L1权重<br/>l1_weight = max(0.1, 1.0 - epoch/100)</code><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-8084-90f5-f4fab13a65d0" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div></li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80fa-8b65-ff6b186a00e7" class="bulleted-list"><li style="list-style-type:disc"><strong>梯度裁剪</strong>：<div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-80e9-9cc3-e7148b16b182" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-802c-b49e-e51a36ec933b" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div></li></ul></div><div style="display:contents" dir="auto"><hr id="24c9d84a-b678-8013-89a5-e729e841e375"/></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-800c-b00a-d440e6d13720" class=""><strong>行业级应用案例</strong></h3></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80fa-afc0-e846b411315c" class="numbered-list" start="1"><li><strong>故宫《千里江山图》修复</strong>：<div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8085-bd36-e9f2235138cd" class="bulleted-list"><li style="list-style-type:disc">损失组合：L1(40%) + Perceptual(50%) + ArtisticStyle(10%)</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8063-aacb-d14bc616bb8c" class="bulleted-list"><li style="list-style-type:disc">关键参数：Gram矩阵降维至前32个主成分</li></ul></div></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8034-b7cb-f0accd9d882b" class="numbered-list" start="2"><li><strong>医疗影像修复</strong>：<div style="display:contents" dir="auto"><ul id="24c9d84a-b678-800e-8dcc-c7d555bda2b8" class="bulleted-list"><li style="list-style-type:disc">损失创新：L1 + SSIM + 拓扑损失（保持器官连通性）</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80b2-a627-e3c6208253b9" class="bulleted-list"><li style="list-style-type:disc">效果：将CT重建误差从3mm降至0.8mm</li></ul></div></li></ol></div><div style="display:contents" dir="auto"><hr id="24c9d84a-b678-80d8-805d-d96257591ae7"/></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-8072-b4fc-ec63f80033d9" class="">通过合理组合这些损失函数，可使修复模型在细节保真度、风格一致性、计算效率之间达到最优平衡。建议通过消融实验（Ablation Study）验证不同损失组合的效果</p></div><div style="display:contents" dir="ltr"><table id="24c9d84a-b678-8043-b035-ef448f26962f" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8018-9200-c95abdab4849"><th id="kcMB" class="simple-table-header-color simple-table-header"></th><th id="|lw~" class="simple-table-header-color simple-table-header"></th><th id="J{OQ" class="simple-table-header-color simple-table-header"></th><th id="lqIG" class="simple-table-header-color simple-table-header"></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8038-a6ad-cce91c5495f5"><td id="kcMB" class=""></td><td id="|lw~" class=""></td><td id="J{OQ" class=""></td><td id="lqIG" class=""></td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8036-8aab-e6b4c2caea13"><td id="kcMB" class=""></td><td id="|lw~" class=""></td><td id="J{OQ" class=""></td><td id="lqIG" class=""></td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80a5-9002-f5c8a52e80ce"><td id="kcMB" class=""></td><td id="|lw~" class=""></td><td id="J{OQ" class=""></td><td id="lqIG" class=""></td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-803a-afc1-deaa49b1966e" class=""><strong>3.2 分布式训练的量子纠缠</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80b1-979b-feb249ac64d9" class="bulleted-list"><li style="list-style-type:disc"><strong>多卡训练配置</strong>：</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-8034-bb3c-ec58e16d5565" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># 使用Horovod实现多机多卡训练
+horovodrun -np 8 -H 192.168.1.100:4,192.168.1.101:4 \
+python train.py --batch_size 64 --lr 1e-4</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-80df-9d04-e65bec58be61" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80d0-8e32-fce1a883b2e1" class=""><strong>3.3 显存压缩黑科技</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8022-a9f3-e06fbfc0552e" class="bulleted-list"><li style="list-style-type:disc"><strong>梯度累积</strong>：</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-80ef-83e6-d34ae684146a" class="code code-wrap"><code class="language-Python" style="white-space:pre-wrap;word-break:break-all">optimizer.zero_grad()
+for i, (imgs, masks) in enumerate(data_loader):
+    outputs = model(imgs, masks)
+    loss = criterion(outputs, targets)
+    loss = loss / accumulation_steps
+    loss.backward()
+    if (i+1) % accumulation_steps == 0:
+        optimizer.step()
+        optimizer.zero_grad()</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-806f-9875-fd9bb38af81e" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><hr id="24c9d84a-b678-8010-80fd-ceb7d987c020"/></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8069-a102-f3111c671daa" class=""><strong>第四章：部署落地——从实验室到生产环境</strong></h3></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-808c-bb97-e07478473a7c" class=""><strong>4.1 移动端部署的极限压缩</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8079-a3a4-c8daca894197" class="bulleted-list"><li style="list-style-type:disc"><strong>TensorFlow Lite优化方案</strong>：<div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8070-93ba-ee48a47faaa6" class="numbered-list" start="1"><li>算子融合（Conv+BN→Conv）</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80cb-a26c-e8b432b09e85" class="numbered-list" start="2"><li>8位整型量化（精度损失&lt;0.5%）</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80a6-8dca-d4238c1a53fc" class="numbered-list" start="3"><li>线程绑定（OpenMP并行优化）</li></ol></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-804b-9864-f30600879a44" class=""><strong>4.2 Web端实时修复方案</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8087-b4fa-e2312922023f" class="bulleted-list"><li style="list-style-type:disc"><strong>Three.js+ONNX.js架构</strong>：</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-80e8-9415-d1c4cd023b84" class="code code-wrap"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">// 创建WebGL渲染器
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+// 加载ONNX模型
+const session = await ort.InferenceSession.create(&#x27;model.onnx&#x27;);
+// 实时修复画布
+const canvas = document.getElementById(&#x27;canvas&#x27;);
+const ctx = canvas.getContext(&#x27;2d&#x27;);</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-8091-b94f-e0e15e9ad22d" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80ee-8b5a-f8abed9be314" class=""><strong>4.3 云原生部署架构</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8097-bcd8-d785823050d8" class="bulleted-list"><li style="list-style-type:disc"><strong>Kubernetes集群部署</strong>：</li></ul></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="24c9d84a-b678-80d9-8bb8-e857e79524e9" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-inpainting
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+      - name: model-server
+        image: nvidia/cuda:11.7.0-base
+        ports:
+        - containerPort: 8000</code></pre></div><div style="display:contents" dir="ltr"><figure id="24c9d84a-b678-8085-8b4c-ecd78cf0349c" class="image"><a href="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="><img style="width:15px" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw=="/></a></figure></div><div style="display:contents" dir="auto"><hr id="24c9d84a-b678-8087-88d3-eb9a92f86dcc"/></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80ed-9c50-dad07a95115b" class=""><strong>第五章：跨界应用——从文物修复到元宇宙</strong></h3></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8067-8bb6-d9c90904fb28" class=""><strong>5.1 故宫《千里江山图》数字重生</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80f1-b1eb-de10a6e99de1" class="bulleted-list"><li style="list-style-type:disc"><strong>技术难点</strong>：<div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80e2-a835-e07785543b0e" class="numbered-list" start="1"><li>分层修复（矿物颜料层+绢本基底）</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-800c-85e1-d0c66b6112ca" class="numbered-list" start="2"><li>笔触风格迁移（王希孟→现代数字画家）</li></ol></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8076-86d4-c615f70c1018" class=""><strong>5.2 医疗影像的生死时速</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-800d-8b30-e8c108cbc6f3" class="bulleted-list"><li style="list-style-type:disc"><strong>案例</strong>：3D脑部MRI修复<div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8014-90fd-fc2648ced54f" class="bulleted-list"><li style="list-style-type:circle">输入：5mm层厚扫描数据</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-800b-9779-f7f4f0a6b47b" class="bulleted-list"><li style="list-style-type:circle">输出：0.5mm高精度重建</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-804b-b090-f7c034cdf562" class="bulleted-list"><li style="list-style-type:circle">临床价值：提前3个月发现胶质瘤</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8002-b3a7-cdf68cffc70e" class=""><strong>5.3 好莱坞特效修复</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80f1-b86c-f997adaa98c6" class="bulleted-list"><li style="list-style-type:disc"><strong>《银翼杀手2049》数字修复</strong>：<div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8055-ba7d-d64142256831" class="bulleted-list"><li style="list-style-type:circle">原始素材：6K IMAX胶片</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-802a-9dd2-dfdb053f0c98" class="bulleted-list"><li style="list-style-type:circle">AI修复：恢复217处划痕和褪色区域</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><hr id="24c9d84a-b678-800d-abf7-ec05ca32fb56"/></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8063-9461-d2ce888d1de6" class=""><strong>第六章：法律与伦理——AI修复的达摩克利斯之剑</strong></h3></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-80ce-bab2-d934ea1282ba" class=""><strong>6.1 肖像权争议案例</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80cf-a37a-ddba86424e5e" class="bulleted-list"><li style="list-style-type:disc"><strong>2024年柏林地方法院判决</strong>：<div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80ee-b074-d6b89120817d" class="bulleted-list"><li style="list-style-type:circle">未经许可修复名人老照片 → 罚款200万欧元</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-80ee-b626-e1fd66f853fc" class="bulleted-list"><li style="list-style-type:circle">关键条款：《欧盟人工智能法案》第14条</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8017-9cd4-c0a80b6dcc29" class=""><strong>6.2 文物修复的伦理困境</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8053-b40e-ed53f9540544" class="bulleted-list"><li style="list-style-type:disc"><strong>敦煌壁画修复争议</strong>：<div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8097-ba7b-c1d6b5da0e7a" class="bulleted-list"><li style="list-style-type:circle">AI方案：自动补全飞天服饰</li></ul></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-805d-ab2a-f18c1ece7937" class="bulleted-list"><li style="list-style-type:circle">专家反对：破坏历史沧桑感</li></ul></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-8060-b805-d5f5d9d10f4c" class=""><strong>6.3 合规操作指南</strong></h3></div><div style="display:contents" dir="auto"><ul id="24c9d84a-b678-8043-bed7-de9939d0540b" class="bulleted-list"><li style="list-style-type:disc"><strong>企业级修复系统必备模块</strong>：<div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-80fa-a6ef-cb38a4d6fac1" class="numbered-list" start="1"><li>数字水印嵌入系统</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8021-b9b0-e6e0c68d5cdd" class="numbered-list" start="2"><li>修复日志区块链存证</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="24c9d84a-b678-8020-943b-d612f8ae40a9" class="numbered-list" start="3"><li>用户授权自动核验</li></ol></div></li></ul></div><div style="display:contents" dir="auto"><hr id="24c9d84a-b678-808e-bd8e-c4e0684870a4"/></div><div style="display:contents" dir="auto"><h3 id="24c9d84a-b678-809a-b2f3-c6ee7388f5a3" class=""><strong>附录：工业级工具链全景图</strong></h3></div><div style="display:contents" dir="ltr"><table id="24c9d84a-b678-8034-984a-c8669ad164e6" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-804e-9e94-f8c4fb418f26"><th id="YYQC" class="simple-table-header-color simple-table-header">工具类型</th><th id="D=wD" class="simple-table-header-color simple-table-header">推荐工具</th><th id="N;&gt;`" class="simple-table-header-color simple-table-header">核心功能</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-80e8-a909-cfc1b5df3d0c"><td id="YYQC" class="">数据标注</td><td id="D=wD" class="">Labelbox</td><td id="N;&gt;`" class="">多人协同标注</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8084-be4d-ccf0d0376ed3"><td id="YYQC" class="">模型训练</td><td id="D=wD" class="">Weights &amp; Biases</td><td id="N;&gt;`" class="">实验跟踪</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8025-ae3a-e63425bbfe19"><td id="YYQC" class="">部署监控</td><td id="D=wD" class="">TensorRT</td><td id="N;&gt;`" class="">模型优化</td></tr></div><div style="display:contents" dir="ltr"><tr id="24c9d84a-b678-8021-b415-ef5cce058083"><td id="YYQC" class="">法律合规</td><td id="D=wD" class="">OpenLaw</td><td id="N;&gt;`" class="">合同模板库</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="24c9d84a-b678-801a-a857-e65340ee1644" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
